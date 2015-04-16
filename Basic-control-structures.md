@@ -194,7 +194,7 @@ do {
 
 Again, the difference from Java is that both `while` and `do-while` are expressions. They are not very interesting though, because they always evaluate to `()`. These loops are very rarely used in Scala, even than in Java - usually only in some low-level or performance critical code.
 
-In the above example, you may have also noticed that we incremented and decremented our local variable using `+=` and `-=`. Scala does not have the C-style prefix and postfix operators `++` and `--`.
+In the above example, you may have also noticed that we incremented and decremented our local variable using `+=` and `-=`. Scala does not have the C-style prefix and postfix operators `++` and `--`. Scala also doesn't have the `break` and `continue` keywords.
 
 Technically, Scala doesn't have a `for` loop. Instead, it has a more general construct called _for comprehension_, which can be used as a foreach-style loop. We will not cover the entire _for comprehension_ syntax here, but only show how to use it like it's a loop. Example:
 
@@ -220,3 +220,121 @@ args.foreach(arg => println(arg))
 The first loop can be even shorter: `args.foreach(println)`. We are using lambdas and higher-order functions here. We will cover them in more detail later.
 Loops written using `for` comprehensions are somewhat less performant than `while` and `do-while` loops due to usage of lambdas, whose body must be compiled to a separate anonymous class.
 Loops in Scala can be avoided much more than in Java thanks to various higher-order functions available on collections and usage of tail recursion. We will cover these topics in some other chapter.
+
+### The `return` keyword
+
+Do not use `return` keyword. Although it works like in Java - exits the method and returns a value - it is rarely needed thanks to the fact that most Scala constructs are valid expressions and can be used as method body. The `return` keyword also interacts poorly with type inference, forcing you to always explicitly declare return type of a method.
+
+### Switch
+
+Scala doesn't have the C-style `switch` construct. Instead, it has a much more powerful feature - pattern matching. We will not cover it fully here, but only show how to use it similarly to `switch`:
+
+```scala
+val x: Int = fetchSomeInt()
+x match {
+  case 0 => println("zero")
+  case 1 => println("one")
+  case 2 => println("two")
+  case _ => println("other")
+}
+```
+
+Just like with any other construct shown before, the pattern match is an expression, so we could refactor the above into:
+
+```scala
+val x: Int = fetchSomeInt()
+println(x match {
+  case 0 => "zero"
+  case 1 => "one"
+  case 2 => "two"
+  case _ => "other"
+})
+```
+
+Important things to remember about pattern matching used like this:
+* Pattern matching works with any type, not just `int`, `short`, `byte`, `char`, `String` and `Enum`s like in Java.
+* If the matched value is `null`, it won't cause immediate `NullPointerException` like in Java. Actually, you can match against `null` in one of the cases.
+* There is no `break` keyword needed after each case (there's no such keyword in Scala)
+* Each case has its own scope, i.e. you can declare local variables after each `=>` sign without enclosing everything in a block.
+* If you forget the return value in one of the cases, i.e. write nothing after the `=>` sign, Scala compiler will implicitly put `()` in there. You may run into similar problems as with the implicitly added `else ()` clause.
+* If you don't provide the default `case _ => something` and matched value won't fall into any other case, a `MatchError` will be thrown.
+
+### Exceptions
+
+Scala has the same syntax for throwing exceptions as Java - it uses the `throw` keyword. It also has a similar syntax for catching exceptions, with the usual `try`, `catch` and `finally` clauses:
+
+```scala
+def intOrZero(str: String): Int =
+  // Scala has some nice API to parse strings into numbers
+  try str.toInt catch {
+    case nfe: NumberFormatException => 0
+  } finally {
+    doSomeCleanup()
+  }
+```
+
+The above method tries to convert its `String` argument to integer value or returns 0 if the conversion fails.
+
+The differences from Java are:
+* The `try` keyword accepts arbitrary expression.
+* There is at most one `catch` block. It uses pattern matching to handle different types of exceptions and can leverage full pattern matching capabilities. As we already noted, this is out of scope of this chapter. Note that the `catch` block also evaluates to some value - `0` in our example.
+* The entire `try-catch-finally` construct is - no surprise - an expression. In above example we have used it as a method body. It evaluates to either the value inside `try` or value returned by the `catch` block. If there is a `Throwable` which does not fall into any of the cases inside the `catch` block, it is rethrown.
+* There is no "try-with-resources" syntax, but it can be fairly easily simulated using lambdas, by-name arguments and higher order functions - these will be covered later.
+
+#### Do not catch `Throwable` in Scala
+
+It is generally considered harmful to catch `Throwable` in Scala. This is because Scala sometimes uses some special types of throwables in regular language features. For example, sometimes the `return` instruction causes a `NonLocalReturnControl` to be thrown. We won't be digging into these details, especially considering the fact that they are mostly used by discouraged language features (like the `return` keyword). At this point let's just assume that catching throwables is bad.
+
+If you want to catch something more than `Exception` but less than `Throwable`, you may use a special `NonFatal` pattern:
+
+```scala
+try doSthDangerous() catch {
+  case NonFatal(t) => t.printStackTrace()
+}
+```
+
+This will catch all throwables except for the special ones used by Scala and some very severe errors like `OutOfMemoryError`. So it may be a good practice to use `NonFatal` everywhere where you would catch `Throwable` in Java.
+
+#### Checked exceptions
+
+Scala does not have them. 
+
+It does not force you to catch any exceptions as well as it does not require you to declare them in your method signatures. However, there is an annotation that simulates the Java's `throws` declaration which can be used for compatibility with Java:
+
+```scala
+@throws(classOf[IOException])
+def readFile(name: String): String = ...
+```
+
+### String interpolation
+
+In Scala, you can concatenate strings and other values in the same way as in Java - using the `+` operator. However, there is a much nicer syntax to do it called string interpolation. It allows you to concisely embed some expressions inside a string literal. For example:
+
+```scala
+println("My name is " + name + " and I am " + age + " years old.")
+```
+
+could be rewritten as:
+
+```scala
+// note the 's'
+println(s"My name is $name and I am $age years old.")
+```
+
+In the example above, we have embedded references to simple identifiers inside the string literal. However, arbitrary expressions can be embedded. For example:
+
+```scala
+val name = "fred"
+val age = 27
+// 'capitalize' converts first letter of a string to upper case
+println("My name is ${name.capitalize} and I am $age years old.")
+```
+
+There is a few reasons why the `s` is required at the beginning of a string literal:
+* String interpolations were introduced in Scala 2.10. It would severely break source compatibility with older versions if regular string literals suddenly became string interpolations.
+* `s` is only one of the available interpolators. It simply concatenates all arguments and string literal parts. But Scala provides a few other interpolators which do something different. For example, the `f` interpolator allows you to provide `printf`-style format to each embedded expression:
+  ```scala
+  stuff
+  ```
+
+**TODO: quirks with escaping in string interpolations**
