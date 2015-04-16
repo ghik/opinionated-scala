@@ -333,8 +333,47 @@ println("My name is ${name.capitalize} and I am $age years old.")
 There is a few reasons why the `s` is required at the beginning of a string literal:
 * String interpolations were introduced in Scala 2.10. It would severely break source compatibility with older versions if regular string literals suddenly became string interpolations.
 * `s` is only one of the available interpolators. It simply concatenates all arguments and string literal parts. But Scala provides a few other interpolators which do something different. For example, the `f` interpolator allows you to provide `printf`-style format to each embedded expression:
+  
   ```scala
-  stuff
+  val name = "Fred"
+  val height = 1.8
+  println(f"$name%s is $height%2.2f meters tall")
   ```
 
+* It is also possible to define custom string interpolators, which can have arbitrary implementations. It is also not required that a string interpolation evaluates to string. For example, one may define a `json` interpolator which parses the string literal into some Scala JSON representation on the fly. We will not cover custom interpolators here.
+
 **TODO: quirks with escaping in string interpolations**
+
+### Multiline strings
+
+Scala has special syntax for string literals which may span multiple lines:
+
+```scala
+val text = """some long
+              multiline text
+              I don't have to "escape" \ anything
+              """
+```
+
+Multiline strings don't escape any characters - new lines and all other special characters are included in the resulting string without change. Unfortunately, this has a drawback. In the example above, the string will contain all the spaces present at the beginning of each line. Fortunately, Scala provides a special method on string that can strip these:
+
+```scala
+val text = """some long
+             |multiline text
+             |I don't have to "escape" \ anything
+             |""".stripMargin
+```
+
+The `stripMargin` method will search for `|` characters inside the string and strip each line to only the contents after `|`.
+
+It is also possible to define *multiline string interpolations*:
+
+```scala
+val email = s"""Hello
+               |
+               |My name is $name and I'm $age years old.
+               |
+               |Best regards
+               |$name
+               |""".stripMargin
+```
