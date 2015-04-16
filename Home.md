@@ -1,1 +1,1 @@
-# Opinionated Scala guide
+# Somewhat opinionated Scala guide
