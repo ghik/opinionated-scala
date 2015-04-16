@@ -129,7 +129,7 @@ def main(args: Array[String]) = {
 ```
 
 The code above is a bit ugly. The `if` condition has duplicated code - we refer to `args(0).toLowerCase` twice. This is bad for two reasons:
-* it violates the DRY principle and makes code ugly
+* it violates the DRY principle and makes code verbose
 * it may be a performance problem - we evaluate the same expression twice
 
 The natural solution would be to extract the duplicated expression to a variable, like so:
