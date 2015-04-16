@@ -120,9 +120,9 @@ If you really need to use reference comparison in Scala, you can still do it wit
 Scala has one more flavor of local variables, the `lazy val`. It is equivalent to `val` except that its value is computed lazily, upon first reference to the `lazy val`. Lazy local values can help us make our code cleaner by making small refactorings easier. Consider the following example:
 
 ```scala
-def main(args: Array[String]) = {
+def processArgs(args: Array[String], start: String, end: String) = {
   // args(0) refers to the first element of args
-  if(args.nonEmpty && args(0).toLowerCase.startsWith("abc") && args(0).toLowerCase.endsWith("sth")) {
+  if(args.nonEmpty && args(0).toLowerCase.startsWith(start) && args(0).toLowerCase.endsWith(end)) {
     // do something
   }
 }
@@ -136,7 +136,7 @@ The natural solution would be to extract the duplicated expression to a variable
 
 ```scala
 val arg = args(0).toLowerCase
-if(args.nonEmpty && arg.startsWith("abc") && arg.endsWith("sth")) {
+if(args.nonEmpty && arg.startsWith(start) && arg.endsWith(end)) {
   // do something
 }
 ```
@@ -147,9 +147,76 @@ In order to fix this, we can simply turn the `val` into a `lazy val`:
 
 ```scala
 lazy val arg = args(0).toLowerCase
-if(args.nonEmpty && arg.startsWith("abc") && arg.endsWith("sth")) {
+if(args.nonEmpty && arg.startsWith(start) && arg.endsWith(end)) {
   // do something
 }
 ```
 
 This way `args(0).toLowerCase` will not be evaluated until the non-empty check is positive. It is also guaranteed that it will be evaluated at most once.
+
+### Local methods
+
+In Scala it is possible to define methods locally - any block of code can contain method definitions. They are visible only inside that block. Let's take the example from `lazy val` description and modify it as follows:
+
+```scala
+def processArguments(args: Array[String], start: String, end: String) = {
+  def checkArg(arg: String) = 
+    arg.startsWith(start) && arg.endsWith(end)
+  if(args.nonEmpty && checkArg(args(0).toLowerCase)) {
+    // do something
+  }
+}
+```
+
+Local methods are better than plain private methods for following reasons:
+* Local method can refer to all the values visible at the point where it's defined. For example, our `checkArg` method can access the `start` and `end` parameters of its outer method. If it were a plain private method, it would have to accept them as its own parameters.
+* Local method is visible only where it's actually needed. We do not pollute other namespaces. This also makes it easier to read the code.
+
+Local methods can greatly improve readability. They allow you to give local but meaningful names to small pieces of your code while still keeping it concise.
+
+### Loops
+
+Scala has `while` and `do-while` loops:
+
+```scala
+var i = 0
+
+while(i < 100) {
+  println(i)
+  i += 1
+}
+
+do {
+  println(i)
+  i -= 1
+} while(i >= 0)
+```
+
+Again, the difference from Java is that both `while` and `do-while` are expressions. They are not very interesting though, because they always evaluate to `()`. These loops are very rarely used in Scala, even than in Java - usually only in some low-level or performance critical code.
+
+In the above example, you may have also noticed that we incremented and decremented our local variable using `+=` and `-=`. Scala does not have the C-style prefix and postfix operators `++` and `--`.
+
+Technically, Scala doesn't have a `for` loop. Instead, it has a more general construct called _for comprehension_, which can be used as a foreach-style loop. We will not cover the entire _for comprehension_ syntax here, but only show how to use it like it's a loop. Example:
+
+```scala
+val args: Array[String] = fetchArgs()
+for(arg <- args) {
+  println(arg)
+}
+// (x to y) creates an object which represents an integer range from x to y, inclusively
+for(i <- (0 to args.length-1)) {
+  println(args(i))
+}
+```
+
+The `for` "loop" above is actually just a syntactic sugar for calling the `foreach` method which takes some action and invokes it for every element. The above example is equivalent to:
+
+```scala
+val args: Array[String] = fetchArgs()
+args.foreach(arg => println(arg))
+(0 to args.length-1).foreach(arg => println(arg))
+```
+
+The first loop can be even shorter: `args.foreach(println)`. We are using lambdas and higher-order functions here. We will cover them in more detail later.
+Loops written using `for` comprehensions are somewhat less performant than `while` and `do-while` loops due to usage of lambdas, whose body must be compiled to a separate anonymous class.
+Loops in Scala can be avoided much more than in Java thanks to various higher-order functions available on collections and usage of tail recursion. We will cover these topics in some other chapter.
