@@ -117,11 +117,39 @@ If you really need to use reference comparison in Scala, you can still do it wit
 
 ### Lazy vals
 
-Scala has one more flavor of local variables, the `lazy val`. It is equivalent to `val` except that its value is computed lazily, upon first reference to the `lazy val`. Lazy local values can help us make our code cleaner. Consider the following example:
+Scala has one more flavor of local variables, the `lazy val`. It is equivalent to `val` except that its value is computed lazily, upon first reference to the `lazy val`. Lazy local values can help us make our code cleaner by making small refactorings easier. Consider the following example:
 
 ```scala
 def main(args: Array[String]) = {
-  //TODO example
+  // args(0) refers to the first element of args
+  if(args.nonEmpty && args(0).toLowerCase.startsWith("abc") && args(0).toLowerCase.endsWith("sth")) {
+    // do something
+  }
 }
 ```
 
+The code above is a bit ugly. The `if` condition has duplicated code - we refer to `args(0).toLowerCase` twice. This is bad for two reasons:
+* it violates the DRY principle and makes code ugly
+* it may be a performance problem - we evaluate the same expression twice
+
+The natural solution would be to extract the duplicated expression to a variable, like so:
+
+```scala
+val arg = args(0).toLowerCase
+if(args.nonEmpty && arg.startsWith("abc") && arg.endsWith("sth")) {
+  // do something
+}
+```
+
+But we have a problem - if `args` is empty, this will fail with an `ArrayIndexOutOfBoundsException`, because `arg` is assigned before we check for non-emptiness.
+
+In order to fix this, we can simply turn the `val` into a `lazy val`:
+
+```scala
+lazy val arg = args(0).toLowerCase
+if(args.nonEmpty && arg.startsWith("abc") && arg.endsWith("sth")) {
+  // do something
+}
+```
+
+This way `args(0).toLowerCase` will not be evaluated until the non-empty check is positive. It is also guaranteed that it will be evaluated at most once.
