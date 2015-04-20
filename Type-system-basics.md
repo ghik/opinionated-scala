@@ -2,7 +2,7 @@
 
 ## Unification of types
 
-Java type system divides its types into two groups: *objects*, where every value is an instance of a class that extends from `java.lang.Object` and *primitives* like `int`, `double`, `boolean`, etc. Primitives are treated specially by the compiler. They can be used as types of local variables, fields, method parameters and return values, but do not participate in class hierarchy and and their values are not *objects*. In particular, they cannot be used as type parameters (generics).
+**Java** type system divides its types into two groups: *objects*, where every value is an instance of a class that extends from `java.lang.Object` and *primitives* like `int`, `double`, `boolean`, etc. Primitives are treated specially by the compiler. They can be used as types of local variables, fields, method parameters and return values, but do not participate in class hierarchy and and their values are not *objects*. In particular, they cannot be used as type parameters (generics).
 
 Scala is different. It's a purely object oriented language in the sense that every value is an object. That is, all the types have their classes and participate in a single class hierarchy. An outline of this hierarchy is shown below:
 
