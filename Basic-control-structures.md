@@ -1,6 +1,6 @@
-## Basic control structures
+# Basic control structures
 
-### Local variables
+## Local variables
 
 Scala has two keywords to define local variables: `val` and `var`. The `val` keyword defines a *value* - a "variable" that cannot change its value after initialization. The `var` keyword denotes a mutable variable.
 
@@ -21,7 +21,7 @@ val adjustedString: String = {
 }
 ```
 
-#### Type inference
+### Type inference
 
 Type inference also works for local variables. We could omit type declarations and write our original example as:
 
@@ -37,11 +37,11 @@ val name = "Fred"
 var counter: Int = 0
 ```
 
-#### Mutable variables
+### Mutable variables
 
 Scala encourages programming style that leverages immutability. Therefore, mutable variables should be avoided as much as possible. As you progress in your learning of Scala, you will see that it has many interesting features which make it possible. Many situations which require mutable variables in Java can be completely avoided in Scala. Try to express as much as you can with `val`s.
 
-### `if` expression
+## `if` expression
 
 Scala's `if` is similar to Java:
 
@@ -102,7 +102,7 @@ Scala compiler will *not* issue an error here. Instead, it will add the implicit
 
 It is also worth to note that since Scala's `if` is an expression, there is no longer a need for the ternary conditional operator known from C and Java (`?:`). Scala doesn't have it.
 
-### Equality comparisons
+## Equality comparisons
 
 In Java, the `==` and `!=` operators perform value comparison on primitive types, but they do a reference comparison for objects. If you want to perform proper equality comparison on objects, you need to use the `equals` method.
 
@@ -115,7 +115,7 @@ if(str == "something") { ... }
 
 If you really need to use reference comparison in Scala, you can still do it with the `eq` and `ne` operators.
 
-### Lazy vals
+## Lazy vals
 
 Scala has one more flavor of local variables, the `lazy val`. It is equivalent to `val` except that its value is computed lazily, upon first reference to the `lazy val`. Lazy local values can help us make our code cleaner by making small refactorings easier. Consider the following example:
 
@@ -154,7 +154,7 @@ if(args.nonEmpty && arg.startsWith(start) && arg.endsWith(end)) {
 
 This way `args(0).toLowerCase` will not be evaluated until the non-empty check is positive. It is also guaranteed that it will be evaluated at most once.
 
-### Local methods
+## Local methods
 
 In Scala it is possible to define methods locally - any block of code can contain method definitions. They are visible only inside that block. Let's take the example from `lazy val` description and modify it as follows:
 
@@ -174,7 +174,7 @@ Local methods are better than plain private methods for following reasons:
 
 Local methods can greatly improve readability. They allow you to give local but meaningful names to small pieces of your code while still keeping it concise.
 
-### Loops
+## Loops
 
 Scala has `while` and `do-while` loops:
 
@@ -221,11 +221,11 @@ The first loop can be even shorter: `args.foreach(println)`. We are using lambda
 Loops written using `for` comprehensions are somewhat less performant than `while` and `do-while` loops due to usage of lambdas, whose body must be compiled to a separate anonymous class.
 Loops in Scala can be avoided much more than in Java thanks to various higher-order functions available on collections and usage of tail recursion. We will cover these topics in some other chapter.
 
-### The `return` keyword
+## The `return` keyword
 
 Do not use `return` keyword. Although it works like in Java - exits the method and returns a value - it is rarely needed thanks to the fact that most Scala constructs are valid expressions and can be used as method body. The `return` keyword also interacts poorly with type inference, forcing you to always explicitly declare return type of a method.
 
-### Switch
+## Switch
 
 Scala doesn't have the C-style `switch` construct. Instead, it has a much more powerful feature - pattern matching. We will not cover it fully here, but only show how to use it similarly to `switch`:
 
@@ -259,7 +259,7 @@ Important things to remember about pattern matching used like this:
 * If you forget the return value in one of the cases, i.e. write nothing after the `=>` sign, Scala compiler will implicitly put `()` in there. You may run into similar problems as with the implicitly added `else ()` clause.
 * If you don't provide the default `case _ => something` and matched value won't fall into any other case, a `MatchError` will be thrown.
 
-### Exceptions
+## Exceptions
 
 Scala has the same syntax for throwing exceptions as Java - it uses the `throw` keyword. It also has a similar syntax for catching exceptions, with the usual `try`, `catch` and `finally` clauses:
 
@@ -281,7 +281,7 @@ The differences from Java are:
 * The entire `try-catch-finally` construct is - no surprise - an expression. In above example we have used it as a method body. It evaluates to either the value inside `try` or value returned by the `catch` block. If there is a `Throwable` which does not fall into any of the cases inside the `catch` block, it is rethrown.
 * There is no "try-with-resources" syntax, but it can be fairly easily simulated using lambdas, by-name arguments and higher order functions - these will be covered later.
 
-#### Do not catch `Throwable` in Scala
+### Do not catch `Throwable` in Scala
 
 It is generally considered harmful to catch `Throwable` in Scala. This is because Scala sometimes uses some special types of throwables in regular language features. For example, sometimes the `return` instruction causes a `NonLocalReturnControl` to be thrown. We won't be digging into these details, especially considering the fact that they are mostly used by discouraged language features (like the `return` keyword). At this point let's just assume that catching throwables is bad.
 
@@ -295,7 +295,7 @@ try doSthDangerous() catch {
 
 This will catch all throwables except for the special ones used by Scala and some very severe errors like `OutOfMemoryError`. So it may be a good practice to use `NonFatal` everywhere where you would catch `Throwable` in Java.
 
-#### Checked exceptions
+### Checked exceptions
 
 Scala does not have them. 
 
@@ -306,7 +306,7 @@ It does not force you to catch any exceptions as well as it does not require you
 def readFile(name: String): String = ...
 ```
 
-### String interpolation
+## String interpolation
 
 In Scala, you can concatenate strings and other values in the same way as in Java - using the `+` operator. However, there is a much nicer syntax to do it called string interpolation. It allows you to concisely embed some expressions inside a string literal. For example:
 
@@ -344,7 +344,7 @@ There is a few reasons why the `s` is required at the beginning of a string lite
 
 **TODO: quirks with escaping in string interpolations**
 
-### Multiline strings
+## Multiline strings
 
 Scala has special syntax for string literals which may span multiple lines:
 
