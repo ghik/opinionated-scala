@@ -17,7 +17,7 @@ val v = Vector(1,2,3)
 ```
 ##### Note about `Vector`
 
-`Vector` in Scala is a very handy collection. It is an immutable sequence (a collection with defined order of elements) with near constant-time access to its element by index. It also has very fast append and prepend operations while still staying an immutable. This is because a vector created by appending something to other vector can share most of the data with its predecessor. Scala's `Vector` class implements this in some clever way. Immutable data structures with an ability to create new instances based on old ones by sharing most of the data are usually called *persistent data structures*.
+`Vector` in Scala is a very handy collection. It is an immutable sequence (a collection with defined order of elements) with near constant-time access to its elements by index. It also has very fast append and prepend operations while still staying fully immutable. This is because a vector created by appending something to other vector can share most of the data with its predecessor. Scala's `Vector` class implements this in some clever way. Immutable data structures with an ability to create new instances based on old ones by sharing most of the data are usually called *persistent data structures*.
 
 ##### Coming back to the syntax
 
