@@ -1,12 +1,12 @@
-## Basic functional constructs
+# Basic functional constructs
 
 One of the most basic features of any functional language are lambdas, i.e. anonymous functions. It's a no surprise that Scala has them too.
 
-### Function objects
+## Function objects
 
 Scala represents functions as objects. There is a set of *traits* (something similar to Java interfaces), each one representing a function of some shape. They can be implemented in Scala just like any other trait, but this generally looks similar to anonymous classes in Java and introduces a lot of boilerplate. Instead, there is a short lambda syntax to represent anonymous function objects. 
 
-### `Function0`
+## `Function0`
 
 The most primitive type of a function is a function that takes no arguments. Anonymous no-argument function can be declared in Scala with following syntax:
 
@@ -38,7 +38,7 @@ doSomething()
 
 Note that this may look like a call to `doSomething` method but it's actually a call of `apply` method on `doSomething` object.
 
-### `Function1`
+## `Function1`
 
 `Function1` trait represents the most commonly used function type - a function that takes a single argument. The full syntax to define anonymous `Function1` is as follows:
 
@@ -78,7 +78,7 @@ As you can see, Scala has multitude of different syntactic flavors for lambdas.
 
 *TODO write more about underscore syntax limitations*
 
-### `Function2` and higher *TODO*
+## `Function2` and higher *TODO*
 
 * higher order functions
 * fold and multiple param lists
