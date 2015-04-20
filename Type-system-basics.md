@@ -34,7 +34,7 @@ Apart from counterparts of Java primitives, it is also possible to define custom
 
 `AnyRef` is simply an alias for `java.lang.Object`. It is the common superclass of all *reference* or *object* types. Entire hierarchy of Java classes sits here. By default, all Scala classes, traits and objects are also subtypes of `AnyRef`.
 
-Apart from all the standard Java methods available for `java.lang.Object`, Scala type system adds reference equality operators to the `AnyRef` class - these are the `eq` and `ne` operators mentioned in previous chapter. It also adds an artificial `synchronized` to it, which is a replacement for language-native `synchronized` keyword in Java, i.e. Java snippet
+Apart from all the standard Java methods available for `java.lang.Object`, Scala type system adds reference equality operators to the `AnyRef` class - these are the `eq` and `ne` operators mentioned in previous chapter. It also adds an artificial `synchronized` method to it, which is a replacement for language-native `synchronized` keyword in Java. For example, the Java snippet:
 
 ```java
 synchronized(someObject) {
