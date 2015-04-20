@@ -36,26 +36,28 @@ Apart from counterparts of Java primitives, it is also possible to define custom
 
 Apart from all the standard Java methods available for `java.lang.Object`, Scala type system adds reference equality operators to the `AnyRef` class - these are the `eq` and `ne` operators mentioned in previous chapter. It also adds an artificial `synchronized` to it, which is a replacement for language-native `synchronized` keyword in Java, i.e. Java snippet
 
-    ```java
-    synchronized(someObject) {
-        // some code here
-    }
-    ```
-    would be rewritten to Scala as:
-    ```scala
-    someObject.synchronized {
-      // some code here
-    }
-    ```
+```java
+synchronized(someObject) {
+    // some code here
+}
+```
+
+would be rewritten to Scala as:
+
+```scala
+someObject.synchronized {
+  // some code here
+}
+```
 
 Scala also makes `synchronized` an expression which can return a value. E.g. we can compute some value under lock and return it:
 
-    ```scala
-    val someInt = someObject.synchronized {
-      // some computation that needs synchronization
-      42 // returned value
-    }
-    ```
+```scala
+val someInt = someObject.synchronized {
+  // some computation that needs synchronization
+  42 // returned value
+}
+```
 
 Classes extending `AnyRef` are nullable.
 
@@ -87,24 +89,23 @@ In Java, there is only one syntax for casting - it is the C-style `(ForcedType)c
 
 In Scala, you can perform upcasting using the *type ascription* syntax:
 
-    ```scala
-    def overloaded(any: Any): Unit
-    def overloaded(str: String): Unit
-
-    overloaded("treatMeAsAny": Any)
-    ```
+```scala
+def overloaded(any: Any): Unit
+def overloaded(str: String): Unit
+overloaded("treatMeAsAny": Any)
+```
 
 Type ascription is much more useful than just for overloading resolution, because it can guide Scala's type inference:
 
-    ```scala
-    val x = "treatMeAsAny": Any
-    ```
+```scala
+val x = "treatMeAsAny": Any
+```
 
 The snippet above is equivalent to:
 
-    ```scala
-    val x: Any = "treatMeAsAny"
-    ```
+```scala
+val x: Any = "treatMeAsAny"
+```
 
 but has a slightly different meaning from the point of view of the type system. The latter means "declare value x of type `Any` and assign it a string value" while the former means "declare value x and assign it a string value explicitly treated as `Any`". The difference is that the first syntax uses type inference - we don't declare the type of `x` but let the compiler infer it from the assigned value. However, the value we assign is a string upcasted to `Any`, so the type of `x` will also be inferred as `Any`.
 
