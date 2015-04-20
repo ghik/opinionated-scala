@@ -107,7 +107,7 @@ The snippet above is equivalent to:
 val x: Any = "treatMeAsAny"
 ```
 
-but has a slightly different meaning from the point of view of the type system. The latter means "declare value x of type `Any` and assign it a string value" while the former means "declare value x and assign it a string value explicitly treated as `Any`". The difference is that the first syntax uses type inference - we don't declare the type of `x` but let the compiler infer it from the assigned value. However, the value we assign is a string upcasted to `Any`, so the type of `x` will also be inferred as `Any`.
+but has a slightly different meaning from the point of view of the type system. The latter means "declare value `x` of type `Any` and assign it a string value" while the former means "declare value `x` and assign it a string value explicitly treated as `Any`". The difference is that the first syntax uses type inference - we don't declare the type of `x` but let the compiler infer it from the assigned value. However, the value we assign is a string up-cast to `Any`, so the type of `x` will also be inferred as `Any`.
 
 Type ascription can also be used to force usage of implicit conversion, e.g. `42: java.lang.Integer` will force 42 - a value of type `Int` - to be converted to `java.lang.Integer`. Note however that the static type of such expression will also be `java.lang.Integer` so this is more than just forcing a boxed representation in runtime.
 
