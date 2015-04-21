@@ -132,19 +132,34 @@ As a somewhat related detail, class objects in Scala can be accessed using the `
 
 ### Handling untyped Java APIs
 
+Due to the fact that hierarchy of toplevel types in Scala is a bit more complicated than in Java by having distinction between `Any` and `AnyRef`, we may sometimes run into problems when using some untyped Java APIs. In most simple cases this is not a problem - Scala compiler conveniently sees methods like this one:
+
+```java
+public Object doSomething(Object anything);
+```
+
+as:
+
+```scala
+def doSomething(anything: Any): Any
+```
+
+As you can see, the Scala compiler interprets `java.lang.Object` in Java method signatures as `Any`. This is nice because we can pass value types to these methods without explicit conversions to their boxed representations. But you may wonder - how can this be correct? `java.lang.Object`, or `AnyRef` is more specific than `Any` - isn't the compiler lying to us about the signatures? Technically, it does, but the truth is that in runtime, values of static type `Any` will need to be boxed anyway which means that they can safely be passed where `java.lang.Object` is required. When someone uses `java.lang.Object` in Java API, it usually means "anything" so it makes sense to assume that if this API was written in Scala, there would be `Any` in the signature and not `AnyRef`.
+
+However, things get a bit more complicated when method signatures are a bit more complex:
+
 Imagine we have a (completely untyped and ugly) Java API for saving some arbitrary value to database. The value is represented as `java.util.Map<String, Object>`:
 
 ```java
 public void save(java.util.Map<String,Object> fieldsWithValues);
 ```
 
-This will be of course seen by Scala as:
+This will be seen by Scala as:
 
 ```scala
 def save(fieldsWithValues: java.util.Map[String,AnyRef]): Unit
 ```
 
-The signature above has a slight problem if we want to use it in Scala.
 Let's assume we want to put ints as values into our map:
 
 ```scala
@@ -166,7 +181,7 @@ map.put("something", 42)
 save(map) // error
 ```
 
-However, we can employ an ugly hack and leverage the fact that if something is declared as `Any`, it will *always* be boxed in runtime. This means that `Any` is effectively represented as `AnyRef` in runtime and we can do an ugly but perfectly safe cast:
+However, we can employ an ugly hack and leverage the fact that if something is declared as `Any`, it will *always* be boxed in runtime. Since `Any` is effectively represented as `AnyRef` in runtime, we can do an ugly but perfectly safe cast:
 
 ```scala
 save(map.asInstanceOf[java.util.Map[String,AnyRef]])
@@ -174,8 +189,10 @@ save(map.asInstanceOf[java.util.Map[String,AnyRef]])
 
 In fact, it turns out that `x.asInstanceOf[AnyRef]` *always* works, no matter what `x` is. Casting to `AnyRef` simply forces a boxed representation. So for example `42.asInstanceOf[AnyRef]` will not fail but force the int to be represented as `java.lang.Integer`. We can use this trick to fool the Scala type system and retain slightly nicer API on Scala side (with `Any` instead of `AnyRef`).
 
-The morale of the story is: if you have some untyped value in your Scala code, always represent it with `Any`. Even if some legacy Java API expects `java.lang.Object`, you can always safely cast.
-
 As a somewhat related fact, there's another trick with `asInstanceOf`: it turns out that `null.asInstanceOf[T]` also always works (except for when `T` is `Nothing`). This is because `null` is a valid representation for primitive types and will be understood as "zero" of given type. For example, `null.asInstanceOf[Int]` will evaluate as 0.
 
 All of the stuff described above is of course a dark, dirty corner of the language and its implementation, but may be needed and even make your Scala APIs better sometimes. That's why we decided to mention it here.
+
+#### Summary
+
+The morale of the story is: if you have some untyped value in your Scala code, always represent it with `Any`. Even if some legacy Java API expects `java.lang.Object`, you can always safely cast.
