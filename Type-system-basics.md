@@ -148,7 +148,7 @@ As you can see, the Scala compiler interprets parameters with type `java.lang.Ob
 
 But you may wonder - how can this be correct? `java.lang.Object`, or `AnyRef` is more specific than `Any` - isn't the compiler lying to us about the signatures? Technically, it does, but the truth is that in runtime, values of static type `Any` will need to be boxed anyway which means that they can safely be passed where `java.lang.Object` is required. When someone uses `java.lang.Object` in Java API, it usually means "anything" so it makes sense to assume that if this API was written in Scala, there would be `Any` in the signature and not `AnyRef`.
 
-However, things get a bit more complicated when method signatures are a bit more complex:
+However, things get a bit more complex when method signatures are no longer that simple:
 
 Imagine we have a (completely untyped and ugly) Java API for saving some arbitrary value to database. The value is represented as `java.util.Map<String, Object>`:
 
