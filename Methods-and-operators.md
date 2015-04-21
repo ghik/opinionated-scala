@@ -83,3 +83,19 @@ args.update(0, "new first arg")
 So everything works simply because `Array` has a method named `update` that takes two arguments.
 
 ## Methods and operators
+
+### Operator overloading
+
+*Does Scala have operator overloading? Can we define custom operators in Scala?*
+
+The answer to questions above can be both "yes" and "no". In practice, it is "yes" - Scala allows us to define almost arbitrarily named operators. This can be even abused to write very unreadable Scala code full of bizarre symbolic names like `<++=` and the likes.
+
+However, the questions above can technically be answered "no". That's because Scala has no real distinction between methods and operators. They're the same thing. Operators are just methods. Even the most basic ones, like arithmetic or logical operators are simply methods defined in classes like `Int`, `Boolean`, `Double` etc. For example, addition operator for ints is declared as:
+
+```scala
+def +(x: Int): Int
+```
+
+But you may think: *There's still a distinction between methods and operators. Methods are called using syntax with dot and parens (i.e. `obj.method(arg)`) while operators are used with infix syntax (`a + b`), aren't they?* Apparently, they are not. Both standard "method call" syntax and infix notation can be used for any method and operator. So, you can write `obj method arg` instead of `obj.method(arg)` and `a.+(b)` instead of `a + b`. It is just a good convention in Scala to use "method call" syntax for method with alphanumeric names and infix syntax for methods with symbolic names ("operators").
+
+So there *really* is no distinction between methods and operators in Scala.
