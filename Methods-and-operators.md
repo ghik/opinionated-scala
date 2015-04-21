@@ -96,6 +96,6 @@ However, the questions above can technically be answered "no". That's because Sc
 def +(x: Int): Int
 ```
 
-But you may think: *There's still a distinction between methods and operators. Methods are called using syntax with dot and parens (i.e. `obj.method(arg)`) while operators are used with infix syntax (`a + b`), aren't they?* Apparently, they are not. Both standard "method call" syntax and infix notation can be used for any method and operator. So, you can write `obj method arg` instead of `obj.method(arg)` and `a.+(b)` instead of `a + b`. It is just a good convention in Scala to use "method call" syntax for method with alphanumeric names and infix syntax for methods with symbolic names ("operators").
+But you may think: *Methods and operators are still different. Methods are called using syntax with dot and parens (i.e. `obj.method(arg)`) while operators are used with infix syntax (`a + b`), aren't they?* Apparently, they are not. Both standard "method call" syntax and infix notation can be used for any method and operator. So, you can write `obj method arg` instead of `obj.method(arg)` and `a.+(b)` instead of `a + b`. It is just a good convention in Scala to use "method call" syntax for method with alphanumeric names and infix syntax for methods with symbolic names ("operators").
 
 So there *really* is no distinction between methods and operators in Scala.
