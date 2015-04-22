@@ -236,7 +236,7 @@ def noParamLists = ...
 
 Why is there such distinction and when to use both variants?
 
-Empty parameter list should be used when a method has some side effects (e.g. it invokes some I/O or modifies a variable). Method with no parameter list should be used when it's *pure* (has no side effects). This is not enforced by Scala type system in any way, but it's a well-established, strong convention.
+Empty parameter list should be used when a method has some side effects (e.g. it invokes some I/O or modifies a variable). Method with no parameter lists should be used when it's *pure* (has no side effects). This is not enforced by Scala type system in any way, but it's a well-established, strong convention.
 
 The same rule applies to invocations of these methods. We would write:
 
