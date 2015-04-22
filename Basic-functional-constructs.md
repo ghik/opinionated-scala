@@ -254,7 +254,7 @@ We have a few options to fix this:
 ```scala
 val reductor1: (Int, Int) => Int = addModulo10
 val reductor2 = addModulo10(_, _)
-val reductor3 = addModule10 _
+val reductor3 = addModulo10 _
 ```
 
 We already know the first two methods. But the third has some new syntax - method name with a space and underscore after it. That's simply another way to force the compiler to treat the method as function - a slightly shorter version of the lambda syntax in second option.
