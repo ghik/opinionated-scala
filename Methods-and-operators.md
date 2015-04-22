@@ -82,9 +82,7 @@ args.update(0, "new first arg")
 
 So everything works simply because `Array` has a method named `update` that takes two arguments.
 
-## Methods and operators
-
-### Operator overloading
+## Methods == operators
 
 *Does Scala have operator overloading? Can we define custom operators in Scala?*
 
