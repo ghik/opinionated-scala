@@ -225,6 +225,38 @@ println(1, 2, 3)
 
 will be understood by the compiler as `println((1,2,3))`, because there's no `println` method with three parameters. This can be very confusing, so it's good to know as soon as possible.
 
+### No-argument methods
+
+While talking about various syntaxes to call methods in Scala, it's also worth to mention that Scala differentiates between methods that have an _empty parameter list_ and methods that have _no parameter lists_:
+
+```scala
+def emptyParamList() = ...
+def noParamLists = ...
+```
+
+Why is there such distinction and when to use both?
+
+Empty parameter list should be used when a method takes no arguments but has some side effects (e.g. it invokes some I/O or modifies a variable). Method with no parameter list should be used when it's *pure* (has no side effects). This is not enforced by Scala type system in any way, but it's a well-established, strong convention.
+
+The same rule applies to invocations of these methods. We would write:
+
+```scala
+val x = emptyParamList()
+val y = noParamLists
+```
+
+However, Scala allows to omit the empty parameter list:
+
+```scala
+val x = emptyParamList
+```
+
+This is for Java compatibility. Scala sees all no-argument Java methods as methods with empty parameter list. Some of them may be pure, but some may not. When calling Java methods, you should use empty parameter list only when the method has side effects. For example, you should not use it when calling getters:
+
+```scala
+val cls = "stuff".getClass
+```
+
 ## Summary
 
 Scala has many syntactic sugars that are meant to make the language more flexible and concise. Unfortunately, these sugars and arbitrary syntax rules can often make it very confusing and sometimes cause annoying ambiguities.
