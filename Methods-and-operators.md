@@ -209,7 +209,7 @@ We'd like to do it like this:
 scalaMap += ("key, "value") // error
 ```
 
-Unfortunately, this won't work, because the compiler will understand this as `scalaMap.+=("key","value")` where we actually meant `scalaMap.+=(("key", "value"))`. In order to make the compiler happy, we need to wrap our pair in more parentheses:
+This won't work, because the compiler will understand it as `scalaMap.+=("key","value")` where we actually meant `scalaMap.+=(("key", "value"))`. In order to make the compiler happy, we need to wrap our pair in more parentheses:
 
 ```scala
 scalaMap += (("key", "value"))
