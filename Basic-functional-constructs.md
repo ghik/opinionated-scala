@@ -236,8 +236,8 @@ In such situations, if the type of the function is clear from the context, then 
 
 ```scala
 def addModulo10(x: Int, y: Int) = (x + y) % 10
-// the `reduce` method applies two-argument function consequently on all elements of the vector
-// until it has single value left
+// the `reduce` method applies two-argument function consequently on all 
+// elements of the vector until it has single value left
 val sumModulo10 = Vector(1,2,3).reduce(addModulo10)
 ```
 
