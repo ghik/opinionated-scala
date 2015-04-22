@@ -243,7 +243,7 @@ val sumModulo10 = Vector(1,2,3).reduce(addModulo10)
 
 Scala's automatic conversion of methods into functions is a transformation called *eta expansion*.
 
-However, sometimes the compiler doesn't have enough information to do this automatically. For example, in the snippet above we don't declare type of `val` and the compiler doesn't know that it has to treat the method as function:
+However, sometimes the compiler doesn't have enough information to do this automatically. For example, in the snippet below we don't declare type of `val` and the compiler doesn't know that it has to treat the method as function:
 
 ```scala
 def addModulo10(x: Int, y: Int) = (x + y) % 10
@@ -252,7 +252,7 @@ val reductor = addModulo10 // error!
 
 We have a few options to fix this:
 * `val reductor: (Int, Int) => Int = addModulo10`
-* `val reductor = addModulo10(_, _)
+* `val reductor = addModulo10(_, _)`
 * `val reductor = addModule10 _`
 
 We already know the first two methods. But the third has some new syntax - method name with a space and underscore after it. That's simply another way to force the compiler to treat the method as function - a slightly shorter version of the lambda syntax in second option.
