@@ -227,4 +227,4 @@ will be understood by the compiler as `println((1,2,3))`, because there's no `pr
 
 ## Summary
 
-Scala has many syntactic sugars that 
+Scala has many syntactic sugars that are meant to make the language more flexible and concise. Unfortunately, these sugars and arbitrary syntax rules can often make it very confusing and sometimes cause annoying ambiguities.
