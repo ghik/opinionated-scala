@@ -225,7 +225,7 @@ println(1, 2, 3)
 
 will be understood by the compiler as `println((1,2,3))`, because there's no `println` method with three parameters. This can be very confusing, so it's good to know as soon as possible.
 
-### No-argument methods
+## No-argument methods
 
 While talking about various syntaxes to call methods in Scala, it's also worth to mention that Scala differentiates between methods that have an _empty parameter list_ and methods that have _no parameter lists_:
 
