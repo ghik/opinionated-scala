@@ -257,6 +257,8 @@ This is for Java compatibility. Scala sees all no-argument Java methods as metho
 val cls = "stuff".getClass
 ```
 
+If a method with empty param list is defined in Scala, you should never omit the empty param list when calling it.
+
 ## Summary
 
 Scala has many syntactic sugars that are meant to make the language more flexible and concise. Unfortunately, these sugars and arbitrary syntax rules can often make it very confusing and sometimes cause annoying ambiguities.
