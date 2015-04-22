@@ -102,7 +102,7 @@ So there *really* is no distinction between methods and operators in Scala.
 
 Ok, so we know that `a + b` is translated to `a.+(b)`. But what if we write `a + b ++ c op d *+* e`? Which operator has the precedence? If Scala only allowed to overload well-known mathematical operators like `+` and `*`, this would not be a problem - it is well known that `*` has precedence over `+` etc. But Scala allows to define completely arbitrary operators, like in the example above. So how does it resolve such situations?
 
-Scala has somewhat peculiar rule for determining operator precedence. It does it by looking at the first character of the operator and then applies predefined priority for each one:
+Scala has somewhat peculiar rule for determining operator precedence. It does it by looking at the **first character** of the operator and then applies predefined priority for each one:
 
 * letters have the lowest priority
 * `|`
@@ -115,15 +115,41 @@ Scala has somewhat peculiar rule for determining operator precedence. It does it
 * `*` `/` `%`
 * all other symbolic characters have highest priority
 
-As you can see, the precedence is set up in such a way that well-known operator precedence for mathematical operators is retained.
+As you can see, the order is set up in such a way that well-known operator precedence for mathematical operators is retained.
 
 You don't have to remember that precedence order, but it is very important to remember that such rule exists. When we previously said that Scala allows you to define almost arbitrarily named operators, it may have seemed that it gives us a great freedom in making up fancy names for operators. But the fact that precedence has to be taken into account makes that freedom much more constrained.
 
-In general, be very careful when creating APIs with fancy operators. Or in fact - avoid them. They can easily lead to very cryptic code and is recommended only when you're carefully crafting some kind of well-documented DSL (domain specific language) and meaning of each operator is well-known in that domain. If you're in doubt, it's better to be conservative and stay with plain, alphanumeric names. This is an area of Scala that can be easily [abused][1]
+In general, be very careful when creating APIs with fancy operators. Or in fact - avoid them. They can easily lead to very cryptic code and is recommended only when you're carefully crafting some kind of well-documented DSL (domain specific language) and meaning of each operator is well-known in that domain. If you're in doubt, it's better to be conservative and stay with plain, alphanumeric names. This is an area of Scala that can be easily [abused](http://www.flotsam.nl/dispatch-periodic-table.html).
+
+### Associativity
+
+OK, so we have the operator precedence set up. But how should `a + b + c` be understood? Is it `a + (b + c)` or `(a + b) + c`?
+
+By default, Scala operators are left-associative, so it is `(a + b) + c`
+
+### Right associative operators
+
+Everything we have said so far has a **very important exception** - it is also a quite arbitrary and non-intuitive one, which makes it even more important to know as soon as possible.
+
+Scala operators whose names **end with a colon** (`:`) are treated specially.
+
+First, the infix notation itself is understood differently - the arguments are **flipped**, So `a +: b` is translated to `b.+:(a)`. To be very precise, it actually translated to:
+
+```scala
+{
+  // _x is just a placeholder - the compiler always chooses some unused, opaque name
+  val _x = a
+  b.+:(_x)
+}
+```
+
+The reason for such strange encoding done by the compiler is to ensure that `a` is evaluated before `b`.
+
+Associativity of colon-ending operators is also flipped. They are **right-associative**. So, `a +: b +: c` is actually `a +: (b +: c)`.
 
 ### Assignment operators
 
-Note: Some symbols which are usually called "operators" in other languages are called *delimiters* in Scala nomenclature. An example is the assignment symbol `=`. So, in context of this discussion, plain assignment is *not* an operator, but a delimiter.
+*Note*: Some symbols which are usually called "operators" in other languages are called *delimiters* in Scala nomenclature. An example is the assignment symbol `=`. So, in context of this discussion, plain assignment is *not* an operator, but a delimiter.
 
 In one of the very simple code examples in the [first chapter](Dissection-of-Hello-World), we have noted that there are no pre-increment or post-increment operators in Scala, so we had to use `+=` to increment a variable:
 
@@ -146,4 +172,39 @@ and the compiler is unable to find actual method named `<+>=` on `l` then it tra
 l = l <+> r
 ```
 
-[1]: http://www.flotsam.nl/dispatch-periodic-table.html
+### Multi-argument infix syntax
+
+Scala allows infix syntax even for methods with more than one argument. So you can write:
+
+```scala
+javaMap put ("key", "value")
+```
+
+instead of
+
+```scala
+javaMap.put("key", "value")
+```
+
+Unfortunately, this comes at a price. Parens in Scala are also used to denote *tuples*. So, by `("key", "value")` we may also mean a pair of two strings, `"key"` and `"value"`. For example, to add a key-value pair to a Scala mutable map, we could use its `+=` operator which takes a single argument - a pair.
+We'd like to do it like this:
+
+```scala
+scalaMap += ("key, "value") // error
+```
+
+Unfortunately, this won't work, because the compiler will understand this as `scalaMap.+=("key","value")` where we actually meant `scalaMap.+=(("key", "value"))`. In order to make the compiler happy, we need to wrap our pair in more parentheses:
+
+```scala
+scalaMap += (("key", "value"))
+```
+
+### Autotupling
+
+In other situations, Scala is doing exactly the opposite - it creates a tuple where we meant to pass multiple arguments. Such transformation is called *autotupling*. For example:
+
+```scala
+println(1, 2, 3)
+```
+
+will be understood by the compiler as `println((1,2,3))`, because there's no `println` method with three parameters. This can be very confusing, so it's good to know as soon as possible.
