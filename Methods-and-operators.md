@@ -97,3 +97,53 @@ def +(x: Int): Int
 But you may think: *Methods and operators are still different. Methods are called using syntax with dot and parens (i.e. `obj.method(arg)`) while operators are used with infix syntax (`a + b`), aren't they?* Apparently, they are not. Both standard "method call" syntax and infix notation can be used for any method and operator. So, you can write `obj method arg` instead of `obj.method(arg)` and `a.+(b)` instead of `a + b`. It is just a good convention in Scala to use "method call" syntax for method with alphanumeric names and infix syntax for methods with symbolic names ("operators").
 
 So there *really* is no distinction between methods and operators in Scala.
+
+### Operator precedence
+
+Ok, so we know that `a + b` is translated to `a.+(b)`. But what if we write `a + b ++ c op d *+* e`? Which operator has the precedence? If Scala only allowed to overload well-known mathematical operators like `+` and `*`, this would not be a problem - it is well known that `*` has precedence over `+` etc. But Scala allows to define completely arbitrary operators, like in the example above. So how does it resolve such situations?
+
+Scala has somewhat peculiar rule for determining operator precedence. It does it by looking at the first character of the operator and then applies predefined priority for each one:
+
+* letters have the lowest priority
+* `|`
+* `^`
+* `&`
+* `<` `>`
+* `=` `!`
+* `:`
+* `+` `-`
+* `*` `/` `%`
+* all other symbolic characters have highest priority
+
+As you can see, the precedence is set up in such a way that well-known operator precedence for mathematical operators is retained.
+
+You don't have to remember that precedence order, but it is very important to remember that such rule exists. When we previously said that Scala allows you to define almost arbitrarily named operators, it may have seemed that it gives us a great freedom in making up fancy names for operators. But the fact that precedence has to be taken into account makes that freedom much more constrained.
+
+In general, be very careful when creating APIs with fancy operators. Or in fact - avoid them. They can easily lead to very cryptic code and is recommended only when you're carefully crafting some kind of well-documented DSL (domain specific language) and meaning of each operator is well-known in that domain. If you're in doubt, it's better to be conservative and stay with plain, alphanumeric names. This is an area of Scala that can be easily [abused][1]
+
+### Assignment operators
+
+Note: Some symbols which are usually called "operators" in other languages are called *delimiters* in Scala nomenclature. An example is the assignment symbol `=`. So, in context of this discussion, plain assignment is *not* an operator, but a delimiter.
+
+In one of the very simple code examples in the [first chapter](Dissection-of-Hello-World), we have noted that there are no pre-increment or post-increment operators in Scala, so we had to use `+=` to increment a variable:
+
+```scala
+i += 1
+```
+
+We have also just said that all operators are methods, but if we look into the `Int` class, we won't find a declaration of `+=` there. So why does it work?
+
+When we use an infix operator that ends with a `=` character, e.g.:
+
+```scala
+// <+> is an example, this can be arbitrary operator
+l <+>= r
+```
+
+and the compiler is unable to find actual method named `<+>=` on `l` then it translates the statement to:
+
+```scala
+l = l <+> r
+```
+
+[1]: http://www.flotsam.nl/dispatch-periodic-table.html
