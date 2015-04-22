@@ -172,6 +172,22 @@ and the compiler is unable to find actual method named `<+>=` on `l` then it tra
 l = l <+> r
 ```
 
+### Unary operators
+
+Scala's unary prefix operators `!`, `~`, `+` and `-` are also translated to method calls. For example, negation:
+
+```scala
+!something
+```
+
+is understood by compiler as
+
+```scala
+something.unary_!
+```
+
+This way unary operators can also be overloaded. However, this applies only to the four listed operators - `!`, `~`, `+` and `-`. You cannot define any other unary operators.
+
 ### Multi-argument infix syntax
 
 Scala allows infix syntax even for methods with more than one argument. So you can write:
@@ -208,3 +224,7 @@ println(1, 2, 3)
 ```
 
 will be understood by the compiler as `println((1,2,3))`, because there's no `println` method with three parameters. This can be very confusing, so it's good to know as soon as possible.
+
+## Summary
+
+Scala has many syntactic sugars that 
