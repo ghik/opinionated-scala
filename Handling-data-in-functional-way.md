@@ -79,6 +79,10 @@ As you can see, tail recursion is the most basic tool to retain immutability of 
 
 Scala has a nice annotation that can help you avoid accidentally writing non-tail-recursive functions where you intended to use tail recursion. Simply annotate your method with `@tailrec` and if the compiler detects that your method is not tail-recursive, it will give you an error.
 
+#### Indirect tail recursion and trampolining
+
+**TODO**
+
 ### Immutable records - case classes
 
 The most basic piece of compound data is a *record* - something that takes a bunch of values of various types, gives each of them a name and wraps them together into a single object. A record that represents a postal address (say city, zipcode, street name and building number) is a very simple example.
@@ -175,3 +179,42 @@ Declaring some class as `case class` causes the following to happen:
 * We can *pattern-match* against the class. We will soon explain in detail what that means. For the sake of completeness, we'll mention that this is allowed thanks to the automatically generated magic `unapply` method in the companion object. Don't worry about what that means now, though.
 * Every case class also extends one of the Scala `Product` traits (`Product1` to `Product22`). This causes the class to have the `productArity`, `productElement`, `productIterator` and `productPrefix` methods. However, these are not very interesting, so we won't be elaborating on them.
 
+### Pattern matching
+
+Pattern matching is one of the flagship features of every functional programming language and one of the most powerful features of Scala.
+
+Pattern matching is closely related to case classes. In previous section, we mentioned that we can pattern match *against* them. Now we're going to show what that means.
+
+Pattern matching essentially allows us to check if some valeu has a specific type and shape (it "matches a particular pattern") and deconstruct that value according to that pattern at the same time (with concise syntax). Let's define a slightly more complex case class for personal data:
+
+```scala
+case class Address(city: String, zipcode: String, street: String, number: Int)
+case class Person(name: String, surname: String, address: Address)
+```
+
+**TODO**
+Pattern matching
+* case class matching
+* nested patterns
+* ignoring with underscore
+* guards
+* matching literals
+* bind operator
+* instanceof patterns
+* multi-value assignments
+* partial functions
+* patterns in for comprehensions
+* extractors?
+Standard case classes:
+* tuples
+Algebraic data types:
+* show in Haskell
+* the same in Scala
+* `sealed` trait
+* about pattern matching ADTs and safety
+* separation of code and data
+Standard types:
+* `List`
+* `Option`
+* `Either`
+* `Try`
