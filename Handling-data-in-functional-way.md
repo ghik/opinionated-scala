@@ -138,7 +138,7 @@ public final class Person {
 }
 ```
 
-This is a horrendous amount of boilerplate code. Here's a Scala equivalent piece:
+This is a horrendous amount of boilerplate code. Here's a Scala equivalent:
 
 ```scala
 case class Person(name: String, surname: String)
