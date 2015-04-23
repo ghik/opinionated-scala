@@ -6,3 +6,4 @@ This is a tutorial intended to guide developers already familiar with Java throu
 2. [Basic control structures](Basic-control-structures)
 3. [Type system basics](Type-system-basics)
 4. [Methods and operators](Methods-and-operators)
+5. [Basic functional constructs](Basic-functional-constructs)
