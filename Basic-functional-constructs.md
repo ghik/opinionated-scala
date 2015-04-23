@@ -260,3 +260,117 @@ val reductor3 = addModulo10 _
 We already know the first two methods. But the third has some new syntax - method name with a space and underscore after it. That's simply another way to force the compiler to treat the method as function - a slightly shorter version of the lambda syntax in second option.
 
 ## Higher order functions
+
+A higher order function (or method) is a function that takes another function as its argument.
+
+Therefore, it's not a surprise that anonymous functions are mostly used when being passed to higher order methods. We've already used a few of these, e.g. `foreach` or `reduce`. In this section, we'll stay a bit more with them to discuss not only how to use them, but how to *define* them.
+
+There is a great number of HOFs available in the Scala collection API. Here are some examples of most basic ones:
+
+```scala
+val nums = Vector(1,5,2,6,4,3,2,7).filter(_ < 5) // Vector(1,2,4,3,2)
+val ints = Vector("123", "456").map(_.toInt)     // Vector(123,456)
+Vector("abc", "hello").foreach(println)          // prints "abc" and "hello"
+```
+
+These are simple - they only take single argument (which is a function). However, when a HOF takes more than one argument, it tends to have a bit more peculiar signature. For example, let's look at the `foldLeft` method available in the Scala collection API:
+
+```scala
+// A is the type of elements in the collection
+def foldLeft[B](z: B)(op: (B, A) => B): B 
+```
+
+It takes two arguments - a value `z` of arbitrary type `B` and a binary function which is able to combine a value of `B` with collection element to produce another value of `B`. At the beginning, the function is applied on `z` and first element of the collection. Then we have another value of type `B` ("next" `z`) which is combined with second element of the collection. This goes on until we apply our function on every collection element and produce final value of type `B`. That value is then returned as the result of entire `foldLeft` invocation.
+
+Very simple example of `foldLeft` usage is to compute a sum of squares of every element in collection:
+
+```scala
+val sumOfSquares = Vector(1,2,3,4).foldLeft(0)((sumSoFar, el) => sumSoFar + el * el)
+```
+#### Multiple parameter lists
+
+You may have already spotted that there's something strange about the signature of `foldLeft` - it takes two arguments, but each of them is passed in a separate pair of parentheses, i.e. each has a separate parameter list in method declaration.
+
+First of all, it may be surprising that Scala even allows something like this. And there's even more than that - `foldLeft` has two parameter lists, but we can define a method which takes arbitrary number of parameter lists, each one with arbitrary number of parameters (zero in particular).
+
+But why would we need something like this? There is a few good reasons for that:
+
+##### Limitations of type inference
+  
+This is probably the most important reason and the primary purpose for multiple parameter lists in `foldLeft`. We'll try to outline what kind of limitations we have in mind. Let's try to define our own `foldLeft` method that takes its argument in a *single* parameter list. For simplicity, let's assume that it works on a collection that we have in a local variable:
+
+```scala
+val vec = Vector(1, 2, 3, 4)
+def vecFoldLeft[B](z: B, f: (B, Int) => B): B = vec.foldLeft(z)(f) 
+
+vecFoldLeft(0, (sumSoFar, el) => sumSoFar + el * el) // error!
+```
+
+Unfortunately, when we try to compile it, we get an error:
+
+```
+error: missing parameter type
+vecFoldLeft(0, (sumSoFar, el) => sumSoFar + el * el)
+                ^
+```
+
+We have passed an `Int` value (zero) as the `z` parameter, so it should be clear for the compiler that `B` == `Int` and the type of `sumSoFar` parameter is `Int`. But unfortunately, it is not. The compiler cannot infer the type of one argument based on type of other argument in the same argument list. That is simply a somewhat arbitrary limitation of type inference algorithm used in Scala.
+
+Apparently, the problem disappears when we split the parameters into two separate parameter lists:
+
+```scala
+def vecFoldLeft[B](z: B)(f: (B, Int) => B): B = vec.foldLeft(z)(f) 
+vecFoldLeft(0)((sumSoFar, el) => sumSoFar + el * el)
+```
+
+This is because Scala type inference processes every argument list one after another. While doing so, it is able to use information obtained from previous argument lists to infer types in subsequent argument lists. In the example above, when the first argument list is processed, the compiler determines that `B` == `Int`. Then it becomes clear for it that the type of `f` is `(Int,Int) => Int` and no longer requires explicit type declaration for `sumSoFar`.
+
+Of course, we could also fix the problem by actually giving the `sumSoFar` parameter some explicit type. But it is better to force the inference to work how we want instead of giving it explicit information.
+
+##### Nicer syntax with long functions
+
+Taking out the function parameter into separate parameter list also has slight aesthetical advantage. If our function is long, we can pass it like this:
+
+```scala
+Vector(1,2,3).foldLeft(0) { (sumSoFar, el) =>
+  // some long code here
+  sumSoFar + el * el
+}
+```
+
+instead of:
+
+```scala
+// let's ignore type inference problems for this example
+Vector(1,2,3).foldLeft(0, (sumSoFar, el) => {
+  // some long code here
+  sumSoFar + el * el
+})
+```
+
+That's minor syntactical advantage - we don't need to wrap our function into both curly braces and parentheses.
+
+*Summary*: when declaring higher order methods which take more than one argument, it is good to place the function argument in a separate parameter list and put it at the end.
+
+##### Slightly nicer partial application
+
+When you expect your higher order method to be partially applied, it is good to move the parameters likely to be NOT supplied when partially applying into the separate parameter list and put it at the end. For example, the following snippet:
+
+```scala
+def takeManyArgs(i: Int, s: String, d: Double, vi: Vector[Int], ls: List[String]) = ???
+val takeOnlySomeArgs = takeManyArgs(42, "stuff", _, _, _)
+```
+
+could become:
+
+```scala
+def takeManyArgs(i: Int, s: String)(d: Double, vi: Vector[Int], ls: List[String]) = ???
+val takeOnlySomeArgs = takeManyArgs(42, "stuff") _
+```
+
+which may be a bit more concise.
+
+Also, by splitting your parameters into separate lists, you kind-of "suggest" that your HOF is likely to be partially applied.
+
+## By-name parameters
+
