@@ -7,4 +7,4 @@ This is a tutorial intended to guide developers already familiar with Java throu
 3. [Type system basics](Type-system-basics)
 4. [Methods and operators](Methods-and-operators)
 5. [Basic functional constructs](Basic-functional-constructs)
-6. [Functional data](Functional-data)
+6. [Handling data in functional way](Handling-data-in-functional-way)
