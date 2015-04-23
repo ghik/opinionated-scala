@@ -64,7 +64,7 @@ def printElementsFrom(arr: Array[String], idx: Int): Unit = {
 
 The function above prints elements of an array starting at index `idx`. In particular, we could use it to print all elements of an array by calling it with `idx == 0`. Note how the recursive invocation is the last thing the function does. When the recursive invocation finishes, its "parent" invocation has nothing more to do.
 
-Scala is able to use this nice property to perform the so-called *tail call optimization*. In standard recursion, every recursive call of the function has its own local variables and other data on the program stack. If the recursion is very deep, we may get a `StackOverflowException` or at least use a lot of memory.
+Scala is able to use this nice property to perform the so-called *tail call optimization*. In standard recursion, every recursive call of the function has its own local variables and other data on the program stack. If the recursion is very deep, we may get a `StackOverflowError` or at least use a lot of memory.
 
 But with tail recursion, we can avoid this. Recursive call is the last thing the function does, so it no longer needs its local variables at that point. This way the recursive call can reuse stack space allocated by its "parent" invocation for its own local variables and prevent the stack from growing.
 
