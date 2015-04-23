@@ -193,6 +193,7 @@ case class Person(name: String, surname: String, address: Address)
 ```
 
 **TODO**
+
 Pattern matching
 * case class matching
 * nested patterns
@@ -205,14 +206,17 @@ Pattern matching
 * partial functions
 * patterns in for comprehensions
 * extractors?
+
 Standard case classes:
 * tuples
+
 Algebraic data types:
 * show in Haskell
 * the same in Scala
 * `sealed` trait
 * about pattern matching ADTs and safety
 * separation of code and data
+
 Standard types:
 * `List`
 * `Option`
