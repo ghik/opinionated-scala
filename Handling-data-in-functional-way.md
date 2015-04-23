@@ -79,3 +79,70 @@ As you can see, tail recursion is the most basic tool to retain immutability of 
 
 Scala has a nice annotation that can help you avoid accidentally writing non-tail-recursive functions where you intended to use tail recursion. Simply annotate your method with `@tailrec` and if the compiler detects that your method is not tail-recursive, it will give you an error.
 
+### Immutable records - case classes
+
+The most basic piece of compound data is a *record* - something that takes a bunch of values of various types, gives each of them a name and wraps them together into a single object. A record that represents a postal address (say city, zipcode, street name and building number) is a very simple example.
+
+Of course, we care about immutability so our records will also be immutable - if we want to modify one of the fields inside a record, we actually create a new record that is a copy of the old one but with this single field changed. Also, it is completely natural to compare records for equality or use them as keys in maps. We would also expect them to have a nice string representation if there's a need to print them during e.g. debugging.
+
+Java is absolutely *terrible* at defining immutable records. It requires a ridiculous amount of boilerplate to meet all the expectations listed above. For example, in order to create a two-field immutable record that holds name and surname, we would need to write a serious amount of code:
+
+```java
+import java.util.Objects;
+
+public final class Person {
+    private final String name;
+    private final String surname;
+
+    public Person(String name, String surname) {
+        this.name = name;
+        this.surname = surname;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public Person withName(String newName) {
+        return new Person(newName, surname);
+    }
+
+    public Person withSurname(String newSurname) {
+        return new Person(name, newSurname);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if(other instanceof Person) {
+            Person otherPerson = (Person)other;
+            return Objects.equals(name, otherPerson.name) &&
+                   Objects.equals(surname, otherPerson.surname);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, surname);
+    }
+
+    @Override
+    public String toString() {
+        return "Person(" + name + ", " + surname + ")";
+    }
+}
+```
+
+This is a horrendous amount of boilerplate code. Here's a Scala equivalent piece:
+
+```scala
+case class Person(name: String, surname: String)
+```
+
+That's it. One line and we meet all the requirements stated earlier. That single line also provides some more features which Java simply has no equivalent of. We'll talk about them later. For now, let's explain what exactly is a *case* class.
+
