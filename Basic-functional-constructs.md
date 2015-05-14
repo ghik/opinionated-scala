@@ -374,3 +374,92 @@ Also, by splitting your parameters into separate lists, you kind-of "suggest" th
 
 ## By-name parameters
 
+Normally, when you pass some expression as an argument to some method, the expression is evaluated eagerly and its result value is passed to that method, which only then is invoked. However, Scala allows to alter this behavior with the so-called *by-name parameters*.
+
+Let's start with an example. Imagine we'd like to write our own implementation of `if-else` statement using a regular method. The method would have to take three parameters: the condition and two expressions - the first one evaluated when condition is true and the second one otherwise:
+
+```scala
+// the method is parameterized (generic) with arbitrary type T
+def ifelse[T](condition: Boolean, whenTrue: T, whenFalse: T): T =
+  if(condition) whenTrue else whenFalse
+```
+
+However, this implementation is not good. If we were to call:
+
+```scala
+val x: Int = fetchSomeInt()
+ifelse(x < 5, println("x < 5"), println("x >= 5"))
+```
+
+the output would be:
+
+```
+x < 5
+x >= 5
+```
+
+Both `x < 5` and `x >= 5` have been printed. This is because the `println` invocations have been evaluated *eagerly*, before the `ifelse` method was called. We need to find some way to defer the evaluation until the condition is checked.
+
+#### Solution with `Function0`
+
+Instead of passing eagerly evaluated values to our method, we could use no-argument functions:
+
+```scala
+def ifelse[T](condition: Boolean, whenTrue: () => T, whenFalse: () => T): T =
+  if(condition) whenTrue() else whenFalse()
+```
+
+We need to wrap passed expressions into no-arg functions, too:
+
+```scala
+ifelse(x < 5, () => println("x < 5"), () => println("x >= 5"))
+```
+
+This will work as intended - the no-argument functions are going to be invoked only after checking the condition and it is guaranteed that only one of them will be invoked.
+
+#### Solution with by-name params
+
+By-name arguments work very similarly to no-argument functions, but have more concise syntax and are treated by the Scala compiler a bit differently. Using by-name arguments, our `ifelse` method could be implemented like this:
+
+```scala
+def ifelse[T](condition: Boolean, whenTrue: => T, whenFalse: => T): T =
+  if(condition) whenTrue else whenFalse
+```
+
+The `=> T` part is a new syntax, previously not used in this guide. It denotes that the parameter is a *by-name* parameter. This is pretty much the same as if the parameter was a no-argument function, except that we don't need to wrap the passed expression explicitly into a function. We could pass the arguments as if it was a regular method:
+
+```scala
+ifelse(x < 5, println("x < 5"), println("x >= 5"))
+```
+
+Passed expressions will still be evaluated on-demand, after checking the condition.
+
+#### Multiple evaluation
+
+It is very important to remember that by-name arguments are re-evaluated **every single time** they are referred to. For example, the following code will print `"Hello"` twice:
+
+```scala
+def doTwice(code: => Any): Unit = {
+  code
+  code
+}
+doTwice(println("Hello"))
+```
+
+Therefore, by-name arguments cannot be treated simply as "lazy" arguments.
+
+#### Use by-name params carefully
+
+By-name arguments provide nicer syntax than no-argument functions, but that syntax can also be dangerous. When looking at method invocation, we can never be sure if its parameters are regular or by-name until we look at method signature. This can lead to very tricky errors. 
+
+Someone could break the program simply by extracting to a local variable an expression passed as by-name argument, causing it to be evaluated eagerly. Things could also go bad when the by-name argument is evaluated more than once by its method or saved somewhere to be evaluated later. 
+
+When defining methods with by-name arguments, we recommend to adhere to following rules:
+
+* method name and purpose should make it clear that its arguments are (or may be) by-name arguments, so that this is apparent in the call site
+* by-name arguments should not be evaluated more than once inside the method, unless its name and usage make it very clear that they are
+* by-name arguments should not be passed for evaluation outside of its method, unless - again - method name and usage make it very clear that they are
+
+In other words, you should design your API so that someone who reads code that uses it sees clearly that some arguments are passed as by-name.
+
+If you have doubts whether it's safe to use by-name arguments, you can always fall back to no-argument functions.
