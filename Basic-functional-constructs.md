@@ -448,6 +448,13 @@ doTwice(println("Hello"))
 
 Therefore, by-name arguments cannot be treated simply as "lazy" arguments.
 
+Multiple evaluation can sometimes be useful. For example, arrays in Scala can be created using the `Array.fill` method which takes array size and initial value for every element as its arguments. The initial value is, however, taken as a by-name parameter. Thanks to that, we could for example create an array of empty mutable Java lists, where every list is a separate instance:
+
+```scala
+// 10 lists will be created
+val lists = Array.fill(10)(new java.util.ArrayList[String])
+```
+
 #### Use by-name params carefully
 
 By-name arguments provide nicer syntax than no-argument functions, but that syntax can also be dangerous. When looking at method invocation, we can never be sure if its parameters are regular or by-name until we look at method signature. This can lead to very tricky errors. 
