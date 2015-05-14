@@ -372,6 +372,10 @@ which may be a bit more concise.
 
 Also, by splitting your parameters into separate lists, you kind-of "suggest" that your HOF is likely to be partially applied.
 
+## Closures
+
+**TODO**
+
 ## By-name parameters
 
 Normally, when you pass some expression as an argument to some method, the expression is evaluated eagerly and its result value is passed to that method, which only then is invoked. However, Scala allows to alter this behavior with the so-called *by-name parameters*.
@@ -470,3 +474,7 @@ When defining methods with by-name arguments, we recommend to adhere to followin
 In other words, you should design your API so that someone who reads code that uses it sees clearly that some arguments are passed as by-name.
 
 If you have doubts whether it's safe to use by-name arguments, you can always fall back to no-argument functions. The difference between them only exists in compile time - in runtime by-name arguments are represented as `Function0` objects.
+
+## Java interoperability
+
+**TODO**
