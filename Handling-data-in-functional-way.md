@@ -192,8 +192,6 @@ case class Address(city: String, zipcode: String, street: String, number: Int)
 case class Person(name: String, surname: String, address: Address)
 ```
 
-**TODO**
-
 Pattern matching
 * case class matching
 * nested patterns
