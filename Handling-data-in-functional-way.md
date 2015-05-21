@@ -233,8 +233,8 @@ But that's of course not always the case. We can require our `person` object to 
 
 ```scala
 val message = person match {
-  case Person("John", surname, _) =>
-    s"Hi, Johnny $surname!"
+  case Person("John", _, _) =>
+    s"Hi, Johnny!"
 }
 ```
 
@@ -243,8 +243,8 @@ We may also extract our literal to a constant:
 ```scala
 val TheName = "John"
 val message = person match {
-  case Person(TheName, surname, _) =>
-    s"Hi, Johnny $surname!"
+  case Person(TheName, _, _) =>
+    s"Hi, Johnny!"
 }
 ```
 
@@ -255,8 +255,8 @@ val theName = "John"
 val message = person match {
   // this will match anything, not just "John"
   // theName in the pattern is a completely new identifier which shadows the one outside
-  case Person(theName, surname, _) =>
-    s"Hi, Johnny $surname!"
+  case Person(theName, _, _) =>
+    s"Hi, Johnny!"
 }
 ```
 
@@ -268,8 +268,8 @@ It is generally recommended to use uppercase-starting names for external constan
 val theName = "John"
 val message = person match {
   // this will match only "John" thanks to backticks
-  case Person(`theName`, surname, _) =>
-    s"Hi, Johnny $surname!"
+  case Person(`theName`, _, _) =>
+    s"Hi, Johnny!"
 }
 ```
 
