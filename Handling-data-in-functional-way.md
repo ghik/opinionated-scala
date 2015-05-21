@@ -185,16 +185,249 @@ Pattern matching is one of the flagship features of every functional programming
 
 Pattern matching is closely related to case classes. In previous section, we mentioned that we can pattern match *against* them. Now we're going to show what that means.
 
-Pattern matching essentially allows us to check if some valeu has a specific type and shape (it "matches a particular pattern") and deconstruct that value according to that pattern at the same time (with concise syntax). Let's define a slightly more complex case class for personal data:
+Pattern matching essentially allows us to check if some value has a specific type and shape (it "matches a particular pattern") and deconstruct that value according to that pattern at the same time (with concise syntax). Let's define a slightly more complex case class for personal data:
 
 ```scala
 case class Address(city: String, zipcode: String, street: String, number: Int)
 case class Person(name: String, surname: String, address: Address)
 ```
 
+In the simplest form of pattern matching, we simply deconstruct an instance of `Person` by giving its parts some identifiers and doing something with them.
+
+```scala
+val person = Person(...)
+person match {
+  case Person(name, surname, address) =>
+    println(s"Hello, $name $surname!")
+}
+```
+
+In this case, we use fields of the `person` object to print a message. But as everything else in Scala, a pattern match is an expression that evaluates to some value. The above snippet could be rewritten as:
+
+```scala
+val message = person match {
+  case Person(name, surname, address) =>
+    s"Hello, $name, $surname"
+}
+println(message)
+```
+
+We have given the parts of `person` object identifiers `name`, `surname` and `address` - exactly the same names as in the definition of `Person` case class. This is natural in this case, but it's not required. We could have used any names we liked.
+
+##### Wildcard patterns
+
+You may have also noticed that we didn't use the `address` in our pattern match. In such case, we may completely omit the name for an unused value and replace it with *wildcard*:
+
+```scala
+val message = person match {
+  case Person(name, surname, _) =>
+    s"Hello, $name $surname"
+}
+```
+
+##### Matching literal values
+
+The above pattern match does not actually test any type or structure - we know that `person` is a `Person` so it cannot have different type or structure that our pattern expects. In other words, it's impossible for the above pattern match to fail.
+
+But that's of course not always the case. We can require our `person` object to have more specific structure. For instance, we may require that the `name` is *exactly* "John" - by using a fixed literal value instead of an identifier that would match anything:
+
+```scala
+val message = person match {
+  case Person("John", surname, _) =>
+    s"Hi, Johnny $surname!"
+}
+```
+
+We may also extract our literal to a constant:
+
+```scala
+val TheName = "John"
+val message = person match {
+  case Person(TheName, surname, _) =>
+    s"Hi, Johnny $surname!"
+}
+```
+
+However, be careful with this! There's a peculiar syntactic rule hidden in there. If we changed the name of our constant to `theName` (lowercase), it will no longer work. Instead of matching exactly the value inside `theName` constant, it would match *any* value and simply give it *identifier* `theName`. Such identifier would just shadow the constant that we defined:
+
+```scala
+val theName = "John"
+val message = person match {
+  // this will match anything, not just "John"
+  // theName in the pattern is a completely new identifier which shadows the one outside
+  case Person(theName, surname, _) =>
+    s"Hi, Johnny $surname!"
+}
+```
+
+Scala decides what to do solely based on whether the identifier starts with uppercase or lowercase letter. This may be very confusing if you're not aware of that detail.
+
+It is generally recommended to use uppercase-starting names for external constants. However, as a last resort, you can put the name of your constant inside backticks. This will force the compiler back into treating the identifier as reference to a constant:
+
+```scala
+val theName = "John"
+val message = person match {
+  // this will match only "John" thanks to backticks
+  case Person(`theName`, surname, _) =>
+    s"Hi, Johnny $surname!"
+}
+```
+
+##### When matching fails
+
+Looking at previous example - what will happen if the name isn't "John"? In such case the pattern match will fail by throwing a `MatchError` (which, contrary to its name, is actually a `RuntimeException`). That's not something we're happy about. What we'd want is to do something special when the name is "John", but do something more generic when it isn't. We can easily achieve this by combining two previous patterns:
+
+```scala
+val message = person match {
+  case Person("John", _, _) =>
+    s"Hi, Johnny!"
+  case Person(name, surname, _) =>
+    s"Hello, $name $surname!"
+}
+```
+
+When we have multiple cases in the pattern match, Scala will check one after another until it finds the first that matches. All other ones will be ignored, even if some of them would match, too. In other words, the order of cases in pattern matching is important. We generally put more specific cases above the more generic ones. The `MatchError` will be thrown only when none of the cases matches.
+
+Note that this also means that we don't need to put any `break` statements at the end of each case, like we do in the `switch` statement in C or Java. Scala doesn't even have the `break` statement. Unlike in `switch` statement, there are also no problems with declaring local variables inside pattern matching cases. Each case body has its own scope.
+
+##### Empty case bodies
+
+If you recall the first chapter of this tutorial, you'll remember that there was a confusing pitfall with the `if` statements which don't have the `else` clause. The Scala compiler silently infers `else ()` in such situations, which may cause very confusing compilation errors.
+
+Pattern matching has a similar pitfall - if you forget to implement the body of any of the cases by putting nothing after the `=>` sign, the compiler will silently insert `()` in there and you may run into exactly the same problems as with the `if` statement (e.g. the type of pattern match may be confusingly inferred as `Any`).
+
+##### Alternatives
+
+Imagine we want to handle "Johnny" in the same way as "John". In the most straightforward way, we would simply add one more case to the pattern match to do this:
+
+```scala
+val message = person match {
+  case Person("John", _, _) =>
+    s"Hi, Johnny!"
+  case Person("Johnny", _, _) =>
+    s"Hi, Johnny!"
+  case Person(name, surname, _) =>
+    s"Hello, $name $surname!"
+}
+```
+
+However, we are repeating ourselves this way - we have two cases with the same body, which is not nice. Fortunately, we can use the `|` operator to combine two patterns into one - an alternative of its arguments:
+
+```scala
+val message = person match {
+  case Person("John", _, _) | Person("Johnny", _, _) =>
+    s"Hi, Johnny!"
+  case Person(name, surname, _) =>
+    s"Hello, $name $surname!"
+}
+```
+
+Unfortunately, the above will not work if we wanted to give an identifier to the person's surname or address. For instance, this will fail with compilation error:
+
+```scala
+val message = person match {
+  // error!
+  case Person("John", surname, _) | Person("Johnny", surname, _) =>
+    s"Hi, Johnny $surname!"
+  case Person(name, surname, _) =>
+    s"Hello, $name $surname!"
+}
+```
+
+However, this example is simple enough so that we can redeem ourselves a bit. Notice that the two patterns that we combined with the `|` operator differ only by the name literal. We can use this to simplify our pattern:
+
+```scala
+val message = person match {
+  case Person("John" | "Johnny", surname, _) =>
+    s"Hi, Johnny $surname!"
+  case Person(name, surname, _) =>
+    s"Hello, $name $surname!"
+}
+```
+
+The `|` operator can be used anywhere in the pattern.
+
+##### Nesting patterns
+
+We have deconstructed an instance of `Person` case class, but it also has another case class as one of its fields - the `Address`. So far, we ignored it, but what if we wanted to deconstruct it, too? We can do this with no problem - patterns can be arbitrarily nested and combined:
+
+```scala
+val message = person match {
+  case Person(name, surname, Address(city, _, _, _)) =>
+    s"Hello, $name $surname from $city!"
+}
+```
+
+##### Bind operator
+
+In above example, deconstruction of `Address` gives us nice syntax to access `city`. But what if we wanted to access both the `city` and the address itself? There's no identifier assigned to an address. Fortunately, we can give it one without destroying the pattern. To do that, we use the *bind* operator:
+
+```scala
+val message = person match {
+  // we have identifiers for both the address and the city
+  case Person(name, surname, addr@Address(city, _, _, _)) =>
+    val formattedAddress = formatAddress(addr)
+    s"Hello, $name $surname from $city! It seems that you live at $formattedAddress."
+}
+```
+
+Bind operator can be used with any pattern on its right side. For example, it could be an alternative of patterns to which we give a common name.
+
+##### `instanceof`-like patterns
+
+So far our patterns only worked with case classes (to check for particular structure) or literal values (to check for equality). However, pattern matching can be used to perform arbitrary runtime type checking. This is similar to Java's `instanceof` operator.
+
+For example, let's assume we just deserialized some object that came from a network and we don't know its type. We just know that it may be an `Int` or `String` or a `Boolean`. Pattern matching allows us to perform runtime tests for these types in concise syntax:
+
+```scala
+def handleInt(i: Int) = ...
+def handleString(s: String) = ...
+def handleBoolean(b: Boolean) = ...
+
+val any: Any = getFromNetwork()
+any match {
+  case i: Int => handleInt(i)
+  case s: String => handleString(s)
+  case b: Boolean => handleBoolean(b)
+  case _ => throw new Exception("Can't handle this value!")
+}
+```
+
+Notice how each case does two things at once - it first checks whether matched value has particular type and if it has, it gives it a new identifier which is already aware of that type. This is something you would usually do in two separate steps in Java - first you would test the type with `instanceof` operator and then cast the value to that type.
+
+The example above shows dedicated syntax (similar to type ascription) for `instanceof`-like patterns. However, runtime type check is also "hidden" inside every other pattern match. For example, nothing stops us from matching our completely untyped `any` value against a case class:
+
+```scala
+def handlePerson(name: String, surname: String) = ...
+
+val any: Any = getFromNetwork()
+any match {
+  case Person(name, surname, _) => handlePerson(name, surname)
+  ...
+}
+```
+
+In this example, Scala will first test whether `any` is actually a `Person` and only then it will proceed to deconstruct it against the pattern.
+
+**WARNING** Pattern matching used to perform runtime type checks is probably the easiest way to abuse its power. It gives us a nice syntax for doing an `instanceof` and type cast at the same time, but it should be avoided just as usage of `instanceof` is avoided in Java. Runtime type checks ("typecasing") are an enemy of type safety and nice abstractions. They go against ability to reason abstractly about code and thus make it much harder to change and maintain. Sometimes they're unavoidable (like when deserializing stuff from network), but having too much of them usually indicates bad design.
+
+Runtime type checking with pattern matching is also limited in the same way as `instanceof` checks are limited in Java by the type erasure. That means you can't check e.g. if your object is a `List[String]` - you can only check if it's a `List[_]` (list of anything). Only the *class* information is retained in runtime, not the full type.
+
+##### Guards
+
+Every pattern matching case may be *guarded* by an arbitrary logical expression which can access deconstructed values. Here's how to do it:
+
+```scala
+val message = person match {
+  case Person(name, surname, _) if name == surname =>
+    s"Why did your parents give you the same name as your surname, $name?"
+}
+```
+
 Pattern matching
 * case class matching
 * nested patterns
+* alternative
 * ignoring with underscore
 * guards
 * matching literals
