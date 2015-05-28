@@ -424,32 +424,18 @@ val message = person match {
 }
 ```
 
-Pattern matching
-* case class matching
-* nested patterns
-* alternative
-* ignoring with underscore
-* guards
-* matching literals
-* bind operator
-* instanceof patterns
-* multi-value assignments
+**TODO**:
+
 * partial functions
-* patterns in for comprehensions
-* extractors?
-
-Standard case classes:
-* tuples
-
-Algebraic data types:
-* show in Haskell
-* the same in Scala
-* `sealed` trait
-* about pattern matching ADTs and safety
-* separation of code and data
+* assignment patterns
+* extractors
+* working with tuples
+* algebraic data types
 
 Standard types:
 * `List`
 * `Option`
 * `Either`
 * `Try`
+
+### For comprehensions
