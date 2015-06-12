@@ -8,3 +8,4 @@ This is a tutorial intended to guide developers already familiar with Java throu
 4. [Methods and operators](Methods-and-operators)
 5. [Basic functional constructs](Basic-functional-constructs)
 6. [Handling data in functional way](Handling-data-in-functional-way)
+7. [Modularization and object orientation](Modularization-and-object-orientation)
