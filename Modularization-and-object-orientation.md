@@ -110,7 +110,7 @@ The primary constructor may, of course, take some parameters. For this, we use a
 
 ```scala
 class MyClass(myName: String) {
-  println(s"My name is $name")
+  println(s"My name is $myName")
 }
 ```
 
@@ -185,6 +185,39 @@ class MyClass(name: String = "DefaultName")
 ```
 
 The difference between the two is that the first variant is more usable from Java code - Java cannot easily call Scala methods or constructors which have default parameter values.
+
+#### Class members
+
+Class members are divided into two groups - *term members* and *type members*.
+Term members are members which represent values - `val`s, `lazy val`s, `var`s, `def`s and `object`s.
+Type members are members which represent types - (inner) `class`es, `trait`s, `type` aliases and abstract `type`s.
+
+* `def` members
+
+These are just methods. We have already seen multiple examples of them.
+
+* `val` members
+
+When a member of some class is a `val`, it represents a field and a method at the same time. Every `val` member is backed by a field in bytecode, but every access to that field goes through an automatically generated getter - a method with the same name as the `val`.
+
+For example, this class:
+
+```scala
+class Klass {
+  val x = 5
+}
+```
+
+yields bytecode equivalent to this Java class:
+
+```java
+public class Klass
+    private int x = 5;
+    public int x() {
+        return this.x;
+    }
+}
+```
 
 * constructors - primary, auxiliary
 * generics, existentials
