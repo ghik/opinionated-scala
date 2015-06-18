@@ -63,9 +63,132 @@ Almost all real-life projects in Java or Scala have their dedicated toplevel pac
 * wildcard imports with exclusions
 
 ### Objects and classes
+
+As we have already seen in many examples in this tutorial - classes in Scala are defined in a standard way - with the `class` keyword and instantiated with the `new` keyword:
+
+```scala
+// we can omit braces if class has empty body
+class MyClass
+// we can omit parens just like for methods with no params
+new MyClass
+```
+
+#### Primary constructor
+
+Constructors in Scala work somewhat differently than in Java. Every Scala class has a *primary constructor*. The code of that constructor is simply the body of the class. For example:
+
+```scala
+class MyClass {
+  println("Doing some work in primary constructor!")
+}
+```
+
+Of course, class body may also contain members (methods, fields, etc.). This way it may actually become an arbitrary mix of class member definitions and pieces of primary constructor code:
+
+```scala
+class MyClass {
+  println("Creating MyClass!")
+
+  val name: String = { 
+    println("Initializing name!")
+    "John"
+  }
+
+  println("Finished creating MyClass!")
+}
+```
+
+The order in which pieces of primary constructor code and member initializers execute reflects their order in the source code, i.e. `new MyClass` would print:
+
+```
+Creating MyClass!
+Initializing name!
+Finished creating MyClass!
+```
+
+The primary constructor may, of course, take some parameters. For this, we use a syntax that looks as if the class itself "takes" some parameters:
+
+```scala
+class MyClass(myName: String) {
+  println(s"My name is $name")
+}
+```
+
+Just like methods, the primary constructor may take multiple parameter lists.
+
+The nice thing about primary constructor parameters is that they may be referred to anywhere in the class definition - not just in the constructor code. For example, we can define a method that uses primary constructor parameter:
+
+```scala
+class MyClass(myName: String) {
+  def printName(): Unit = println(myName)
+}
+```
+
+On bytecode level, Scala compiler will automatically turn such constructor parameters into class fields so that they can be accessed even after the primary constructor finished its execution (you can imagine them to be `private[this] val`s).
+
+Primary constructors may also have access modifiers. For example:
+
+```scala
+class MyClass private(myName: String)
+```
+
+This syntax may look somewhat odd when the constructor has no params and even more odd when also the class has empty body but is otherwise perfectly valid:
+
+```scala
+// private primary constructor with no params on class with empty body
+class MyClass private
+```
+
+You can easily turn primary constructor parameters to also be members of your class by adding the `val` keyword:
+
+```scala
+class MyClass(val myName: String)
+// now myName is a constructor param but can also be accessed from outside!
+new MyClass().myName
+```
+
+Such constructor-parameter-members can have all the modifiers that normal class members can - they can be `private`, `final`, etc.
+
+#### Auxiliary constructors
+
+Apart from the primary constructor, you may also define *auxiliary constructors*. However - every auxiliary constructor must call some other (previously defined) constructor as its first instruction. This way the primary constructor must *always* be invoked eventually.
+
+The syntax for auxiliary constructors is as follows:
+
+```scala
+class MyConnection(hostPort: String) {
+  // simply delegate to primary constructor
+  def this(host: String, port: Int) = this(s"$host:$port")
+
+  def this(port: Int) = {
+    // delegate to other constructor, but do something more afterwards
+    this("localhost", port)
+    println("No host given, assuming localhost!")
+  }
+}
+```
+
+Auxiliary constructors are similar to overloaded constructors in Java. However, note that in Java they are often used to provide default values for some other constructors' parameters. In Scala this can be achieved much easier with default parameters. 
+
+For example, instead of writing:
+
+```scala
+class MyClass(name: String) {
+  def this() = this("DefaultName")
+}
+```
+
+we can simply do this:
+
+```scala
+class MyClass(name: String = "DefaultName")
+```
+
+The difference between the two is that the first variant is more usable from Java code - Java cannot easily call Scala methods or constructors which have default parameter values.
+
 * constructors - primary, auxiliary
-* generics
+* generics, existentials
 * vals, lazy vals, vars, bean properties
 * methods, full syntax
-* abstract members
+* abstract members, overriding
 * no statics, companion objects
