@@ -220,15 +220,15 @@ public class Klass
 ```
 
 * constructors - primary, auxiliary
-** *local variables annoyance*
+ * *local variables annoyance*
 * generics, existentials
 * methods, full syntax
 * abstract members, overriding
 * vals, lazy vals, vars, *bean properties*
 * inner classes and objects
-
 * no statics, companion objects, import annoyance
 * inner classes and objects
+ * self alias
 
 Implementing table:
 
@@ -253,3 +253,11 @@ lazy val    yes  no   yes       no   no
 var         pair no   no        no   no
 object      yes  yes  no        no   no
 ```
+
+* traits
+ * comparison to Java 8 interfaces
+ * init code, but no constr params
+ * multiple inheritance
+ * overriding and linearization
+ * initialization order problems, early initialization
+ * the `abstract override`
