@@ -220,8 +220,36 @@ public class Klass
 ```
 
 * constructors - primary, auxiliary
+** *local variables annoyance*
 * generics, existentials
-* vals, lazy vals, vars, bean properties
 * methods, full syntax
 * abstract members, overriding
-* no statics, companion objects
+* vals, lazy vals, vars, *bean properties*
+* inner classes and objects
+
+* no statics, companion objects, import annoyance
+* inner classes and objects
+
+Implementing table:
+
+```
+   abstract def  val  var
+concrete
+def         yes  no   no 
+val         yes  yes  no 
+lazy val    yes  yes  no
+var         yes  no   yes
+object      yes  yes  no
+```
+
+Overriding table:
+
+```
+ overridden def  val  lazy val  var  object
+overriding
+def         yes  no   no        no   no
+val         yes  yes  no        no   no
+lazy val    yes  no   yes       no   no
+var         pair no   no        no   no
+object      yes  yes  no        no   no
+```
