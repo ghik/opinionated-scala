@@ -157,7 +157,7 @@ class MyClass(val myName: String)
 new MyClass().myName
 ```
 
-Such constructor-parameter-members can have all the modifiers that normal class members can - they can be `private`, `final`, have annotations etc.
+Such constructor-parameter-members can have all the modifiers that normal class members can - they can be `private`, `final`, implement or override something, have annotations etc.
 
 #### Auxiliary constructors
 
