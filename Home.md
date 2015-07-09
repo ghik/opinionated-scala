@@ -8,7 +8,7 @@ This is a tutorial intended to guide developers already familiar with Java throu
 4. [Methods and operators](Methods-and-operators)
 5. [Basic functional constructs](Basic-functional-constructs)
 6. [Handling data in functional way](Handling-data-in-functional-way)
-7. [Packages-and-imports](Packages-and-imports)
+7. [Packages and imports](Packages-and-imports)
 8. [Classes and objects](Classes-and-objects)
 9. [Traits](Traits)
 10. [Generics and type members](Generics-and-type-members)
