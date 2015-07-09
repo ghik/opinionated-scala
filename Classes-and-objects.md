@@ -407,7 +407,7 @@ Objects can also have inner classes and objects - they work the same way as for 
 
 Scala traits can also be inner to objects, classes and other traits and traits themselves can also have inner classes, objects and traits. This was not mentioned earlier because traits require a separate chapter of their own.
 
-### Companion objects
+### Statics and companion objects
 
 **TODO**
 
