@@ -149,7 +149,7 @@ class MyOtherClass private extends Object
 
 Access modifiers (`private`, `protected` etc) will be described in detail later in this section.
 
-You can easily turn primary constructor parameters to also be members of your class by adding the `val` keyword:
+You can easily turn primary constructor parameters to also be members of your class by adding the `val` or `var` keyword:
 
 ```scala
 class MyClass(val myName: String)
