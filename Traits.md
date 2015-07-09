@@ -2,7 +2,7 @@ Traits are a rich and complex feature of Scala and thus deserve a separate secti
 
 Traits, defined with the `trait` keyword are something between Java interfaces and abstract classes. In fact, we'll see that they *almost* can do everything that abstract classes can, but at the same time they fulfill all roles of Java interfaces.
 
-#### Traits as interfaces
+### Traits as interfaces
 
 In their most simple form, `trait`s are equivalent to Java interfaces:
 
@@ -18,7 +18,7 @@ In this form the `trait` contains only public, abstract methods. Just like with 
 
 Also, note that such Scala trait will compile to regular Java interface in bytecode.
 
-#### Method implementations
+### Method implementations
 
 In Java 8, interface methods may have default implementations ("default methods"). Scala can do this too (although it's not called "default methods"):
 
@@ -36,22 +36,7 @@ trait StuffHandler {
 
 At this point, however, the similarities between Java interfaces and Scala traits end. Now we're going to show capabilities of traits which will lead us much more closer to abstract classes.
 
-#### Much more than public methods
-
-Unlike in Java interfaces, methods don't have to be public - they may have any access qualifier that a class method may have. They can also be `final` (Java 8 default methods can't)
-
-```scala
-trait SafeStuffHandler {
-  final def handleSafely(stuff: String): Unit =
-    try handleUnsafely(stuff) catch { 
-      case NonFatal(t) => t.printStackTrace()
-    }
-  
-  protected def handleUnsafely(stuff: String): Unit
-}
-```
-
-#### Inheritance syntax
+### Inheritance syntax
 
 Scala has two keywords for expressing inheritance (which includes mixing in traits): `extends` and `with`. However, as we will explain shortly, be aware that `with` is not an equivalent of Java's `implements`.
 
@@ -106,7 +91,22 @@ So it's good to think about it as if we're mixing `Base`, `Logging` and `Utils` 
 
 **NOTE**: The order of traits mixed in by class or trait definition **does matter** - you will soon see why. Also, base class must always come immediately after `extends` keyword.
 
-#### Data and state
+### Much more than public methods
+
+Unlike in Java interfaces, methods don't have to be public - they may have any access qualifier that a class method may have. They can also be `final` (Java 8 default methods can't)
+
+```scala
+trait SafeStuffHandler {
+  final def handleSafely(stuff: String): Unit =
+    try handleUnsafely(stuff) catch { 
+      case NonFatal(t) => t.printStackTrace()
+    }
+  
+  protected def handleUnsafely(stuff: String): Unit
+}
+```
+
+### Data and state
 
 Just like classes, `trait`s in Scala can have data and state in the form of `val`s, `lazy val`s, `var`s and `object`s. They may be abstract or concrete, they may implement, override, be final, etc.
 
@@ -116,7 +116,7 @@ That's why we usually don't say that traits are "implemented" but rather "mixed 
 
 **TODO** some nice example?
 
-#### Traits can extend classes
+### Traits can extend classes
 
 Traits can extend other traits and thus call, implement, refine and override inherited members. But a trait can also inherit from class and do the same things with its members (almost):
 
@@ -141,7 +141,7 @@ class BetterConcreteHandler extends BetterHandler with LoggingHandler
 
 The `LoggingHandler` trait is a simple example of trait created for some code reuse. Every class that extends `BaseHandler` and wants to add some logging to its `handle` method can just mix in the `LogginHandler` trait.
 
-#### Multiple class inheritance?
+### Multiple class inheritance?
 
 You may think: if a trait can extend a class and a class can mix in multiple traits, does that mean that a class can have multiple (unrelated) base classes?
 
@@ -157,7 +157,7 @@ class ConcreteHandler extends Unrelated with LoggingHandler
 
 We would get a compilation error, because `BaseHandler` and `Unrelated` can't be both superclasses of `ConcreteHandler`.
 
-#### Initialization code
+### Initialization code
 
 We have already announced that traits can have `val`s, `lazy val`s, `var`s and `object`s. This means that traits may have some initialization code associated with them.
 
@@ -165,7 +165,7 @@ In fact, traits have a "constructor". Just like in a class or object, the body o
 
 However, the fundamental difference from classes is that **trait constructor cannot take parameters**.
 
-#### Linearization
+### Linearization
 
 Multiple implementation inheritance and the fact that traits have an initialization code ("constructor") creates some serious challenges:
 
@@ -211,6 +211,32 @@ Note that this algorithm makes it clear why the order of declared mixed in trait
 
 Linearization gives us clear answers to all three questions we had earlier:
 
-* the diamond problem: Linearization removes duplicates, so that state and data from the same trait cannot be inherited multiple times independently.
-* conflict resolution: Linearization order gives us clear priority of one implementation over another. Implementations with earlier position in the chain have priority over the ones after them. The defining class itself has highest priority. Additionally when some member implementation refers to its `super` implementation, the `super` reference will actually point to the next implementation on the linearization order. We'll see some more examples of this in the section about stackable traits.
-* initialization order: class constructors and trait "constructors" are invoked according to reverse linearization order, i.e. starting with `Any` and ending with the constructor of the defining class itself.
+### The diamond problem
+
+Linearization removes duplicates, so that state and data from the same trait cannot be inherited multiple times independently.
+
+### Conflict resolution
+
+Linearization order gives us clear priority of one implementation over another. Implementations with earlier position in the chain have priority over the ones after them. The defining class itself has highest priority. Additionally when some member implementation refers to its `super` implementation, the `super` reference will actually point to the next implementation on the linearization order.
+
+**TODO** example
+
+#### Explicit `super` references
+
+**TODO**
+
+#### Stackable traits
+
+**TODO**
+
+#### `abstract override`
+
+**TODO**
+
+### Initialization order
+
+Class constructors and trait "constructors" are invoked according to reverse linearization order, i.e. starting with `Any` and ending with the constructor of the defining class itself.
+
+#### Common pitfalls
+
+**TODO**
