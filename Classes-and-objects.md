@@ -319,8 +319,10 @@ class Outer {
   new Inner // will be bound to Outer's `this` instance
 }
 
-val outer = new Outer
-new outer.Inner // will be bound to 'outer' object
+object Test {
+  val outer = new Outer
+  new outer.Inner // will be bound to 'outer' object
+}
 ```
 
 #### Referring to outer instance
@@ -360,7 +362,7 @@ class Outer {
 
 then:
 
-```
+```scala
 val o1 = new Outer
 val o2 = new Outer
 
@@ -381,7 +383,7 @@ class Outer {
 
 then:
 
-```
+```scala
 val o1 = new Outer
 val o2 = new Outer
 
