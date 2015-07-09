@@ -221,7 +221,7 @@ Linearization order gives us clear priority of one implementation over another. 
 
 **TODO** example
 
-#### Explicit `super` references
+#### The meaning of `super`
 
 **TODO**
 
@@ -233,6 +233,8 @@ Linearization order gives us clear priority of one implementation over another. 
 
 **TODO**
 
+#### `super` references to classes
+
 ### Initialization order
 
 Class constructors and trait "constructors" are invoked according to reverse linearization order, i.e. starting with `Any` and ending with the constructor of the defining class itself.
@@ -240,3 +242,8 @@ Class constructors and trait "constructors" are invoked according to reverse lin
 #### Common pitfalls
 
 **TODO**
+
+### Self-type annotations
+
+**TODO**
+
