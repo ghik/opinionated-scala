@@ -301,6 +301,12 @@ k.number += 5
 
 **NOTE**: `k.number = 10` is automatically translated to `k.number_=(10)` only if **both** getter and setter are declared. Just declaring the setter is not enough.
 
+### Access modifiers
+
+**TODO**
+
+### Inner classes and objects
+
 #### Inner classes
 
 You can define a class inside another class (or object). Inner classes are bound to particular instance of its enclosing class (or object) and have access to its members.
