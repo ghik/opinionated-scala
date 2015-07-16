@@ -285,12 +285,14 @@ class D extends B with C
 There are multiple ways this conflict can be resolved, either by leaving the job to linearization or doing it explicitly:
 
 * Override in class `D`:
+
   ```scala
   class D extends B with C {
     override def someString = "D"
   }
   ```
 * Override in class `D` and refer to super implementation:
+
   ```scala
   class D extends B with C {
     override def someString = super.someString
@@ -299,6 +301,7 @@ There are multiple ways this conflict can be resolved, either by leaving the job
   The `super` keyword will choose first implementation of `someString` available in the linearization chain. In this case, the linearization is `[D,C,B,A]` and because of that, implementation from `C` will be used.
   Of course, the implementation of overriding method is not limited to calling super implementation - it may contain arbitrary code and call super implementation at any point.
 * Override in class `D` and explicitly refer to particular super implementation:
+
   ```scala
   class D extends B with C {
     override def someString = super[B].someString
@@ -386,7 +389,8 @@ This is a direct consequence of initialization order of `B`. From linearization 
 
 So, how do we fix it? There are several ways, but all have their limitations:
 
-* Implement the abstract `val` with a constructor parameter
+* Implement the abstract `val` with a constructor parameter:
+
   ```scala
   trait A { 
     val someString: String
@@ -396,6 +400,7 @@ So, how do we fix it? There are several ways, but all have their limitations:
   ```
   Fields that have their values from constructor parameters are initialized *before* super constructors and initializers, that's why this works.
 * Implement your abstract `val` with a `lazy val`:
+
   ```scala
   trait A { 
     val someString: String
@@ -407,6 +412,7 @@ So, how do we fix it? There are several ways, but all have their limitations:
   ```
   This works, but note that this also causes `someString` to be initialized *before* the constructor of `B` is invoked. Therefore, you must be careful not to refer to something that is initialized by this constructor (e.g. another `val` defined in class `B`) in the initial value of your `lazy val`.
   For example, if you do this:
+
   ```scala
   class B extends A {
     lazy val someString = s"Number is $someNumber"
@@ -417,6 +423,7 @@ So, how do we fix it? There are several ways, but all have their limitations:
 
   Also, notice an unintuitive fact: `lazy` keyword is normally supposed to *delay* the initialization of a field, but here it does the opposite - it actually makes it happen *earlier* than normally.
 * Make the non-abstract member (i.e. `someStringUpper`) a `lazy val` or `def`:
+
   ```scala
   trait A { 
     val someString: String
@@ -427,6 +434,7 @@ So, how do we fix it? There are several ways, but all have their limitations:
   }
   ```
   However, in order for this to work, you must ensure that nobody uses `someStringUpper` before constructor of `B` initializes `someString`. For example, if you do this:
+
   ```scala
   trait A { 
     val someString: String
@@ -436,6 +444,7 @@ So, how do we fix it? There are several ways, but all have their limitations:
   ```
   then everything will fail again.
 * As an absolute last resort, use an *early initializer*:
+
   ```scala
   trait A { 
     val someString: String
