@@ -110,7 +110,9 @@ val ab: A with B = ???
 Such type should be read as "something that is an instance of both `A` and `B`". Unfortunately, usage of `with` keyword is a bit accidental here, because its meaning is substantially different than in inheritance syntax. In particular:
 * `A` and `B` can be arbitrary types, not just classes or traits
 * the order of types does not matter
+
   For example, if `A` and `B` are traits, this code will compile:
+  
   ```scala
   val awb: A with B = new B with A
   ```
