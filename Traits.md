@@ -322,7 +322,7 @@ There are multiple ways this conflict can be resolved, either by leaving the job
 
 #### The undetermined meaning of `super`
 
-Previous examples for conflict resolution have show a very peculiar property of Scala's `super` keyword: when some trait refers to a `super` implementation, it does not know where that implementation is until some class actually mixes in that trait and linearization takes its final word. This is a serious semantic difference from Java and can be very surprising.
+Previous examples for conflict resolution have shown a very peculiar property of Scala's `super` keyword: when some trait refers to a `super` implementation, it does not know where that implementation is until some class actually mixes in that trait and linearization takes its final word. This is a serious semantic difference from Java and can be very surprising.
 
 In particular, note that a trait `B` defined like this:
 
@@ -348,7 +348,7 @@ trait AppendMoreStuff extends Abs {
 }
 ```
 
-We have overridden an abstract method and at the same time referred to `super` implementation. That implementation is not yet there - a (non-abstract) class which finally mixes in our `Over` trait must "inject" some implementation of `someString` under `AppendMoreStuff`. For example:
+We have overridden an abstract method and at the same time referred to `super` implementation. That implementation is not yet there - a (non-abstract) class which finally mixes in our `AppendMoreStuff` trait must "inject" some implementation of `someString` under `AppendMoreStuff`. For example:
 
 ```scala
 trait AbsImpl extends Abs {
