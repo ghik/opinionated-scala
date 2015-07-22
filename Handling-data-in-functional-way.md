@@ -477,6 +477,17 @@ val surnamesOfJohnnyOrEmpty = listOfPersons.map {
 
 However, be careful - the `map` method that we have used is not aware that its argument is a `PartialFunction` and it's unable to check whether it is defined or not for particular argument. Therefore, if you pass partial functions where regular functions are expected, make sure that the PF is *always* defined. This way it's not going to be "partial" anymore, but the point is that we can still use the nice pattern matching like syntax.
 
+#### Partial function syntax for multi argument functions
+
+Sometimes it's also worth to know that Scala will also accept partial function syntax where multi-argument functions are expected. For example:
+
+```scala
+def takeFunctionTwo(fun: (Int,String) => String) = ???
+takeFunctionTwo {
+  case (int, string) => /* do something */
+}
+```
+
 ### Pattern assignment
 
 Let's look at this simple code:
