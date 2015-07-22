@@ -426,7 +426,7 @@ val message = person match {
 
 ### Partial functions
 
-Having a function `A = B` we usually assume that the function is safe to call on any argument of type `A` (or at least we would like to). However, this is not always the case - the function may throw an exception. For example:
+Having a function `A => B` we usually assume that the function is safe to call on any argument of type `A` (or at least we would like to). However, this is not always the case - the function may throw an exception. For example:
 
 ```scala
 val fun: String => Int =
@@ -521,7 +521,7 @@ This is a very handy syntactic feature of Scala. You can use pretty much any pat
 
 ### Algebraic data types
 
-**TODO***
+**TODO**
 
 #### Common ADTs from standard library
 
