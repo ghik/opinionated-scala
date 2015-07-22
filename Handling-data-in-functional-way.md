@@ -424,15 +424,109 @@ val message = person match {
 }
 ```
 
-**TODO**:
+### Partial functions
 
-* partial functions
-* assignment patterns
-* extractors
-* working with tuples
-* algebraic data types
+Having a function `A = B` we usually assume that the function is safe to call on any argument of type `A` (or at least we would like to). However, this is not always the case - the function may throw an exception. For example:
 
-Standard types:
+```scala
+val fun: String => Int =
+  _.toInt
+```
+
+Calling `fun("abc")` will throw a `NumberFormatException`. We clearly see that the function is properly defined only for some of the possible values that can be technically passed to it. In this case we can pass any string value to `fun` but it will only return result for these strings which are correct representations of integer numbers.
+
+Scala has a specialized function type which allows us to ask whether it is defined for given argument or not: `PartialFunction`.
+
+`PartialFunction` inherits `Function1`, so it has a regular `apply` method, but it also has the `isDefinedAt` operation which allows us to ask whether that partial function is defined for particular value or not.
+
+`PartialFunction` also exposes some convenience methods:
+
+* `applyOrElse` - this is like `apply` but allows us to provide a fallback function that will be used if the partial function is not defined for particular value.
+* `orElse` - combines two partial functions together into a single partial function. The second partial function serves as a fallback which is used when the first function is not defined for some value.
+* `lift` - transforms a `PartialFunction[A,B]` into a `Function[A,Option[B]]`. An `Option[B]` may be one of two things - either `Some[B]` which contains the `B` value returned by original partial function or `None` if the partial function was not defined for particular value. We'll talk about the `Option` later in more detail.
+
+Scala also provides a dedicated syntax for defining `PartialFunction`s. It's based on the pattern matching syntax. Here's how we would redefine our string-to-integer parsing function as a partial function:
+
+```scala
+val fun: PartialFunction[String,Int] = {
+  // let's ignore negative numbers for simplicity
+  case str if str.forall(_.isDigit) => 
+    str.toInt
+}
+```
+
+As you can see, the partial function body is like a pattern match, but without the `<expr> match` part at the beginning. You can think of it as if the argument of partial function was pattern-matched against our list of `case` definitions. If none of the cases match, the partial function will say that it's not defined for that argument.
+
+Now, if we want to use `0` as a default value for the result (in case the string is not a proper integer representation), we could do it like this:
+
+```scala
+val string: String = ...
+val parsed: Int = fun.applyOrElse(string, _ => 0)
+```
+
+Note that `PartialFunction` is still a `Function` so you can use the partial function syntax when using various higher-order functions. For example:
+
+```scala
+case class Person(name: String, surname: String)
+val listOfPersons: List[Person] = ...
+val surnamesOfJohnnyOrEmpty = listOfPersons.map {
+  case Person("Johnny" | "John", surname) => surname
+  case _ => ""
+}
+```
+
+However, be careful - the `map` method that we have used is not aware that its argument is a `PartialFunction` and it's unable to check whether it is defined or not for particular argument. Therefore, if you pass partial functions where regular functions are expected, make sure that the PF is *always* defined. This way it's not going to be "partial" anymore, but the point is that we can still use the nice pattern matching like syntax.
+
+### Pattern assignment
+
+Let's look at this simple code:
+
+```scala
+val x = someVeryLongExpression()
+println(x)
+```
+
+Although there's no real point in writing it like this, technically this code does the same thing as:
+
+```scala
+someVeryLongExpression() match {
+  case x => println(x)
+}
+```
+
+Now, let's assume the pattern match from above is a little more complicated, e.g.
+
+```scala
+somePerson() match {
+  case Person(name, surname) => println(s"Hi, $name $surname!")
+}
+```
+
+Now the pattern is not as trivial as before - we extract two values (name and surname) from a case class. However, we can still go back to the previous syntax:
+
+```scala
+val Person(name, surname) = somePerson()
+println(s"Hi, $name $surname!")
+```
+
+This is a very handy syntactic feature of Scala. You can use pretty much any pattern on the left side of an assignment. However, you have to be careful - if the value on the right side of assignment does not match the pattern, a `MatchError` will be thrown.
+
+### Extractors
+
+**TODO**
+
+### Working with tuples
+
+**TODO**
+
+### Algebraic data types
+
+**TODO***
+
+#### Common ADTs from standard library
+
+**TODO**
+
 * `List`
 * `Option`
 * `Either`
