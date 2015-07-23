@@ -332,6 +332,40 @@ object Test {
 
 However, adding that generic is somewhat a boilerplate. It isn't very painful in our simple example, but it may become much more annoying when there is e.g. more than just one type parameter, some of the params have type bounds that need to be repeated and you have many places in your code that needs to be made generic just because of that. That's why type members are often much more flexible in such situations.
 
+#### Naming conventions
+
+You are probably used to giving one-letter names to type parameters in Java. This convention generally persists also for generics in Scala, but you should **NOT** carry it over to abstract type members.
+
+Names of type members should be longer and much more descriptive than names of type parameters. This is because names of type members are actually part of the public API, while names of type parameters are not so much. This has two important consequences:
+
+* Changing the name of type member can introduce a serious backwards compatibility breakage
+  Let's assume we have a library with a stack trait similar to the one from previous examples:
+  ```scala
+  trait Stack {
+    type Elem
+  }
+  ```
+  Somebody uses our library and implements the stack:
+  ```scala
+  class IntStack extends Stack {
+    type Elem = Int
+  }
+  ```
+  If we now change the `Elem` to something else, the implementor's code would be broken. The `type Elem = Int` will still compile but will just become a type alias unrelated to base trait and the type member from `Stack` will remain abstract.
+
+  Note that such problem doesn't exist with plain generics:
+  ```scala
+  trait Stack[E]
+  ```
+  Implementation:
+  ```scala
+  class IntStack extends Stack[Int]
+  ```
+  Changing `E` to some other name would not break anything.
+
+* There may be name conflicts between type members inherited from different traits
+  **TODO**
+
 #### The my-type problem
 
 Here's a very common problem in Java, Scala and possibly other object oriented languages with inheritance: how to declare a method that returns "self" type? In other words, how to return the same type as the actual type of an instance on which the method is called? For example:
@@ -444,6 +478,7 @@ Advantages of type members over generics:
 Advantages of generics over type members:
 * generics may be referred to in constructor parameters (and self-type annotation)
 * type parameters are recognized by Java
+* names of type parameters may be much more freely changed than names of type members (without breaking backwards compatibility)
 
 In general, a type member seems to be a good replacement for type parameter in situations where the generic was only there to be made concrete by various subclasses.
 
