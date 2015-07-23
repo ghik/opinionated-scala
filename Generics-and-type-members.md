@@ -435,7 +435,7 @@ Type members are purely Scala feature - Java does not see them. If you want your
 
 #### Type members - summary
 
-Advantages of type members over type parameters:
+Advantages of type members over generics:
 * type members don't pollute type declarations of your trait, like generics do
 * adding a type member to class or trait is by itself a fully backwards compatible change, while adding a type parameter will require you to rewrite a lot of code that uses your trait or class
 * type member may be referred to outside of its declaring class or trait using path-dependent types
