@@ -27,5 +27,8 @@ Implicit conversions:
 * implicit values of type `A => B`
 * remember that `implicit def`s are lifted to functions (*eta expansion*)
 * when some types don't match, the compiler will try to use implicit conversions
+* "convenience" implicit conversions
+* implicit conversions don't chain
 * the compiler may also use implicit conversion when it looks for a member that doesn't exist in the original type
 * implicit views, implicit classes, extension methods
+* magnet pattern
