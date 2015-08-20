@@ -24,11 +24,17 @@ Implicit parameter usages:
 * type classes - later
 
 Implicit conversions:
-* implicit values of type `A => B`
-* remember that `implicit def`s are lifted to functions (*eta expansion*)
-* when some types don't match, the compiler will try to use implicit conversions
-* "convenience" implicit conversions
-* implicit conversions don't chain
-* the compiler may also use implicit conversion when it looks for a member that doesn't exist in the original type
-* implicit views, implicit classes, extension methods
-* magnet pattern
+* as part of "implicit parameters" feature, the compiler looks for implicits when it needs something to pass as an implicit parameter
+* as part of "implicit conversions" feature, the compiler also looks for implicit values of type `A => B` when it has value of type `A` in a context where value of type `B` is required
+* implicit `def`s are implicit conversions by eta-expansion
+* additionally, as part of "implicit conversions" feature, the compiler looks for implicit conversions which would allow it to call some otherwise unresolved member of some type - extensions methods
+* `implicit class` syntax, value classes
+* extension methods - actually more powerful than regular methods
+
+Convenience implicit conversions - why not cool:
+* we usually want the conversion to work in only one specific context, but it will pollute everything
+* alternative: extension methods and "converters"
+* extension methods and overloading
+* implicit conversion to controlled type - magnet pattern example
+* still annoying - implicit conversions don't chain
+* refactor method into generic and implicit conversion stops working
