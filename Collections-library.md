@@ -41,6 +41,17 @@ Java => Scala:
 
 ### API
 
+Operation types:
+* transformations (`filter`, `map`, `collect`, `flatMap`, `sorted` etc)
+* extractions (`drop`, `tail`, `slice`, etc)
+* element accessing (`head`, `find`, `findOption`, `apply`, etc)
+* aggregations (`count`, `reduce`, `fold`, `sum`, etc)
+* modifications (`:+`, `+:`, etc)
+* combinations (`++`, `zip`, etc.)
+* deconstructions (`groupBy`, `partition`, `splitAt`, etc)
+* views (`sliding`, `grouped`, etc.)
+* converters (`to`, `toList`, `toMap`, etc)
+
 Basic language types:
 * `scala.Any extends ` + 9 additional members
 * `java.lang.Object extends scala.Any` + 8 additional members
