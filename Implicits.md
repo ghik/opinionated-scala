@@ -43,6 +43,7 @@ Type classes:
 * the idea in Haskell - `Monoid` example
 * a way to do polymorphism
 * scala encoding using implicits, ops implicit class
+* `Ordering`, `Numeric`
 * more powerful than inheritance
  * we can define typeclass instances for arbitrary types, not classes
  * we can define typeclass instances for types not defined by us
