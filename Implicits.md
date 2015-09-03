@@ -38,3 +38,13 @@ Convenience implicit conversions - why not cool:
 * implicit conversion to controlled type - magnet pattern example
 * still annoying - implicit conversions don't chain
 * refactor method into generic and implicit conversion stops working
+
+Type classes:
+* the idea in Haskell - `Monoid` example
+* a way to do polymorphism
+* scala encoding using implicits, ops implicit class
+* more powerful than inheritance
+ * we can define typeclass instances for arbitrary types, not classes
+ * we can define typeclass instances for types not defined by us
+ * we can express complex rules for type class instances and dependencies between typeclasses
+* `Foldable`, higher-kinds and ops
