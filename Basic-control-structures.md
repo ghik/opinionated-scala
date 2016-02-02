@@ -214,7 +214,7 @@ The `for` "loop" above is actually just a syntactic sugar for calling the `forea
 ```scala
 val args: Array[String] = fetchArgs()
 args.foreach(arg => println(arg))
-(0 to args.length-1).foreach(arg => println(arg))
+(0 to args.length-1).foreach(i => println(args(i)))
 ```
 
 The first loop can be even shorter: `args.foreach(println)`. We are using lambdas and higher-order functions here. We will cover them in more detail later.
