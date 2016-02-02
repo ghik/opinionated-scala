@@ -206,7 +206,7 @@ Unfortunately, this comes at a price. Parens in Scala are also used to denote *t
 We'd like to do it like this:
 
 ```scala
-scalaMap += ("key, "value") // error
+scalaMap += ("key", "value") // error
 ```
 
 This won't work, because the compiler will understand it as `scalaMap.+=("key","value")` where we actually meant `scalaMap.+=(("key", "value"))`. In order to make the compiler happy, we need to wrap our pair in more parentheses:
