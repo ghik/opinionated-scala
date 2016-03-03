@@ -113,7 +113,7 @@ If we used Scala's `Function` instead of `java.util.function.Predicate`, the sig
 def filter(predicate: T => Boolean): Stream[T]
 ```
 
-We don't need to use any wildcards thanks to the fact that `Function` is *contravariant* in its input type. We have briefly explained that in [Basic functional constructs](../Basic-functional-constructs). We'll also talk more about variance in detail later.
+We don't need to use any wildcards thanks to the fact that `Function` is *contravariant* in its input type. We have briefly explained that in [Basic functional constructs](Basic-functional-constructs). We'll also talk more about variance in detail later.
 
 #### Java raw types
 
