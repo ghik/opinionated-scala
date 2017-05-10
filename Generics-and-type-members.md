@@ -453,7 +453,7 @@ Let's replace type parameter with type member:
 trait HasName {
   type Self <: HasName
   def name: String
-  def withName(newName: String): T
+  def withName(newName: String): Self
 }
 final class Person(val name: String, val surname: String) extends HasName {
   type Self = Person
