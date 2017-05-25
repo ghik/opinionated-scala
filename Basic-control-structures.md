@@ -327,7 +327,7 @@ In the example above, we have embedded references to simple identifiers inside t
 val name = "fred"
 val age = 27
 // 'capitalize' converts first letter of a string to upper case
-println("My name is ${name.capitalize} and I am $age years old.")
+println(s"My name is ${name.capitalize} and I am $age years old.")
 ```
 
 There is a few reasons why the `s` is required at the beginning of a string literal:
