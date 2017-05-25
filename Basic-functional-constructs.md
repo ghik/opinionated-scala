@@ -28,7 +28,7 @@ val doSomething: () => Unit =
 def apply(): R
 ```
 
-As we know previous section, `apply` is a magic method which here allows us to invoke our function like this:
+As we know from previous section, `apply` is a magic method which here allows us to invoke our function like this:
 
 ```scala
 doSomething()
@@ -128,7 +128,7 @@ val consumeString: String => Unit =
   consumeAnything
 ```
 
-This is also very natural - a function that consumes anything can is definitely a function that can consume a string.
+This is also very natural - a function that consumes anything is definitely a function that can consume a string.
 
 Covariance and contravariance can even work together:
 
@@ -148,7 +148,7 @@ Functions that take two arguments have similar syntax:
 
 ```scala
 // Scala introduces a `*` operator on strings which repeats a string given number of times
-val repeatUpper = (s: String, n: Int) = s.toUpperCase * n
+val repeatUpper = (s: String, n: Int) => s.toUpperCase * n
 ```
 
 Again, we may omit type declarations when explicitly stating the type of function:
@@ -235,7 +235,7 @@ def addModulo10(x: Int, y: Int) = (x + y) % 10
 val sumModulo10 = Vector(1,2,3).reduce((x,y) => addModulo10(x,y))
 ```
 
-In such situations, if the type of the function is clear from the context, then we can simply write name of the method where the function is expected:
+In such situations, if the type of the function is clear from the context, then we can simply write the name of the method where the function is expected:
 
 ```scala
 val sumModulo10 = Vector(1,2,3).reduce(addModulo10)
