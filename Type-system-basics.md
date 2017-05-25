@@ -83,7 +83,7 @@ As you can see, Scala largely unifies primitive and reference types by giving th
 
 In Java, there is only one syntax for casting - it is the C-style `(ForcedType)castValue` syntax, but we differentiate between:
 * *upcasting* - when we force a value of some class to be treated as value of its superclass. This is a perfectly safe cast. It is usually needed for forcing some particular overloaded variant of a method to be used.
-* *downcasting* - when we force a value of some class to be treated as value of its subclass. This is an unsafe cast that will resunt in `ClassCastException` being thrown in runtime if the actual class is not what we asked for.
+* *downcasting* - when we force a value of some class to be treated as value of its subclass. This is an unsafe cast that will result in `ClassCastException` being thrown in runtime if the actual class is not what we asked for.
 
 #### Type ascription
 
