@@ -244,4 +244,5 @@ There's also a special syntax that allows you to import everything *except* some
 
 ```scala
 // import everything from java.io except StringWriter and StringReader
-import java.io.{StringReader => _, StringWriter => _, _}```
+import java.io.{StringReader => _, StringWriter => _, _}
+```
