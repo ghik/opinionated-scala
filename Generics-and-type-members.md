@@ -546,7 +546,7 @@ catBox.value = new Cat
 
 Scala will, again, refuse to compile the line where `mammalBox` is cast to `Box[Cat]`. And it's right to do so, because accessing `catBox.value` should give us a `Cat` and we know that there's a `Dog` instead. So we would see `ClassCastException` again. In order to tell the compiler that we're only interested in putting cats into `catBox`, we can use another wildcard:
 
-```
+```scala
 val catBox: Box[_ >: Cat] = mammalBox
 ```
 
@@ -557,13 +557,13 @@ Now the compiler knows that `catBox` is a box not just for cats but for some mor
 When a class has a type parameter, looking into its usages inside this class we can determine whether the generic value goes "in" or "out" of the class (or both or neither). In the case of `Box[T]` the `T` goes both "out" and "in" because we can both access and modify the `value` field.
 But if `Box` was immutable, the parameter `T` would only go "out", e.g.
 
-```
+```scala
 class ImmutableBox[T](val value: T)
 ```
 
 On other occasions, a generic may only go "in", e.g.
 
-```
+```scala
 trait Consumer[T] {
   def consume(value: T): Unit
 }
