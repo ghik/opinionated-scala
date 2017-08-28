@@ -513,7 +513,7 @@ The answer is no, `scalac` will give us an error and it will be right about it, 
 animalBox.value = new Frog // putting a frog into a box only for mammals :(
 ```
 
-which would be totally wrong, because we expect that `mammalBox` contains only mammals and we've just put an frog into it. Sooner or later we're going to see a `ClassCastException` when trying to access the `value` of `mammalBox`.
+which would be totally wrong, because we expect that `mammalBox` contains only mammals and we've just put a frog into it. Sooner or later we're going to see a `ClassCastException` when trying to access the `value` of `mammalBox`.
 
 But what if our intention was not to put `value` into `animalBox` but only accessing it? Then it would be totally safe, because `Mammal` is a subtype of `Animal`, so without any problem we could do:
 
@@ -554,7 +554,7 @@ Now the compiler knows that `catBox` is a box not just for cats but for some mor
 
 #### What goes in and out
 
-When a class has a type parameter, looking into its usages inside this class we can determine whether the generic value goes "in" or "out" of the class (or both). In the case of `Box[T]` the `T` goes both "out" and "in" because we can both access and modify the `value` field.
+When a class has a type parameter, looking into its usages inside this class we can determine whether the generic value goes "in" or "out" of the class (or both or neither). In the case of `Box[T]` the `T` goes both "out" and "in" because we can both access and modify the `value` field.
 But if `Box` was immutable, the parameter `T` would only go "out", e.g.
 
 ```
