@@ -634,3 +634,9 @@ val catHole: Hole[Cat] = mammalHole // no need to use wildcards now!
 ```
 
 In the same manner, the compiler now checks if `T` only appears at contravariant positions in `Hole`.
+
+#### Common uses and examples of variance
+
+The most common situation where a type parameter is declared as covariant are all sorts of immutable data structures like `Option` or `List`. Covariance is natural for them because since they're immutable, data can only be retrieved from them and not mutated inside them. Therefore, the type-parameterized data only goes "out" of them. If you look at various collections in the standard library, you'll see that almost all immutable collection implementations (e.g. `List`, `Vector`) and non-mutable collection traits (e.g. `scala.collection.Traversable`, `scala.collection.Seq`) have their element type parameter declared as covariant. A controversial exception is `Set` which isn't covariant because of its `contains` and `apply` methods (a `Set` can be seen as a predicate, i.e. function from its element type to `Boolean`).
+
+**NOTE**: we have made a distinction between _immutable_ and _non-mutable_ collections. The word _immutable_ refers to collection traits and classes which are guaranteed to never change their contents. These usually inhabit the `scala.collection.immutable` package. However, there are also traits in the `scala.collection` package which are base traits for both immutable and mutable collections. To these we refer as _non-mutable_ because while they may be extended by mutable collection implementations, by themselves they don't expose any mutating API. That alone is enough in order to make them covariant.
