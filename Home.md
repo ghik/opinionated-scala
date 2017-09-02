@@ -12,5 +12,6 @@ This is a tutorial intended to guide developers already familiar with Java throu
 8. [Classes and objects](Classes-and-objects)
 9. [Traits](Traits)
 10. [Generics and type members](Generics-and-type-members)
-11. [Implicits](Implicits)
-12. [Collections library](Collections-library)
+11. [Variance](Variance)
+12. [Implicits](Implicits)
+13. [Collections library](Collections-library)
