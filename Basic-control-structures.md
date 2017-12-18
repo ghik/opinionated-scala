@@ -332,17 +332,32 @@ println(s"My name is ${name.capitalize} and I am $age years old.")
 
 There is a few reasons why the `s` is required at the beginning of a string literal:
 * String interpolations were introduced in Scala 2.10. It would severely break source compatibility with older versions if regular string literals suddenly became string interpolations.
-* `s` is only one of the available interpolators. It simply concatenates all arguments and string literal parts. But Scala provides a few other interpolators which do something different. For example, the `f` interpolator allows you to provide `printf`-style format to each embedded expression:
-  
-  ```scala
-  val name = "Fred"
-  val height = 1.8
-  println(f"$name%s is $height%2.2f meters tall")
-  ```
+* `s` is only one of the available interpolators. It simply concatenates all arguments and string literal parts. But Scala provides a few other interpolators which do something different: 
+  * the `f` interpolator allows you to provide `printf`-style format to each embedded expression:
 
-* It is also possible to define custom string interpolators, which can have arbitrary implementations. It is also not required that a string interpolation evaluates to string. For example, one may define a `json` interpolator which parses the string literal into some Scala JSON representation on the fly. We will not cover custom interpolators here.
+    ```scala
+    val name = "Fred"
+    val height = 1.8
+    println(f"$name%s is $height%2.2f meters tall")
+    ```
+  * the `raw` interpolator works just like `s` but it doesn't treat escape sequences
 
-**TODO: quirks with escaping in string interpolations**
+    ```scala
+    println(raw"sth\t\nsth") // will print 'sth\t\nsth', \t and \n won't be escaped
+    ```
+    `raw` interpolator can come in handly when defining regular expressions which have their own escaping - you can avoid having two levels of escaping. As an alternative to `raw` interpolator you can also use multiline string syntax (described below).
+
+* The real strength of string interpolations in Scala is that it's an extensible feature - it's possible to define custom string interpolators, which can have **arbitrary signatures** - an interpolation may decide how many arguments does it take, what are their types and what's the final result type (it doesn't have to be a string). For example, one may define a `json` interpolator which parses the string literal along with some spliced arguments into some Scala JSON representation.
+
+### String interpolations and escaping
+
+There's an annoying difference in how scalac parses string interpolations with regard to treating escapes. Escape sequences in normal strings are treated during parsing of Scala code, so that in runtime there is no information left about it. With string interpolations it's not like that and it has some unpleasantly surprising consequences.
+
+The compiler leaves the job of treating escapes to be done in runtime by the actual implementations of string interpolations. At first sight this is good because each interpolation may decide if it wants to treat escapes or not. This way we have `s` and `f` which do treat escapes and the `raw` interpolation which doesn't do that. However, this also means that we cannot escape double quotes (`"`) in string interpolations.
+
+For example if you change a perfectly correct string literal `"sth\"more"` into a string interpolation `s"sth\"more"` it will suddenly stop compiling because the parser will think that the escaped double quote is actually the end of the string. This might cause compilation errors which are **very confusing** to the programmer unaware of this behaviour.
+
+Also, note that in order to avoid escaping, instead of using `raw` interpolator
 
 ## Multiline strings
 
@@ -355,7 +370,7 @@ val text = """some long
               """
 ```
 
-Multiline strings don't escape any characters - new lines and all other special characters are included in the resulting string without change. Unfortunately, this has a drawback. In the example above, the string will contain all the spaces present at the beginning of each line. Fortunately, Scala provides a special method on string that can strip these:
+Multiline strings don't escape any characters - new lines and all other special characters are included in the resulting string without change. Unfortunately, this has a drawback. In the example above, the string will contain all the whitespace present at the beginning of each line. Fortunately, Scala provides a special method on string that can strip these:
 
 ```scala
 val text = """some long
@@ -377,3 +392,13 @@ val email = s"""Hello
                |$name
                |""".stripMargin
 ```
+
+The triple-quote syntax is also useful even if your string doesn't have multiple lines. This is because inside triple quotes it's not necessary to treat escapes. Therefore, it's a good alternative to `raw` interpolator which avoids the problems with escaping double quote:
+
+```scala
+val regex = """(\w)+"something"""
+```
+
+**However**, remember that string interpolations treat escapes in **runtime**, so if you change the above to string interpolation (e.g. `s"""(\w)+"something"""`) then it will **fail with runtime** with `InvalidEscapeException` when trying to interpret `\w` as an escape sequence!
+
+Opinionated conclusion: the fact that the compiler moves treatment of escape sequences in string interpolation to runtime was a really bad idea by language designers.
