@@ -56,7 +56,7 @@ The block above will evaluate to `42` and therefore, can be assigned to variable
 
 ### Method body is an expression
 
-In general, method definition expects and *expression* after the `=` sign. The reason why we were able to put a block as a body of `main` is because a block is also an expression. But since our block has only one statement inside, we could shorten our `main` method definition:
+In general, method definition expects an *expression* after the `=` sign. The reason why we were able to put a block as a body of `main` is because a block is also an expression. But since our block has only one statement inside, we could shorten our `main` method definition:
 
 ```scala
 def main(args: Array[String]): Unit = println("Hello")
