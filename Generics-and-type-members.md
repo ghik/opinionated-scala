@@ -443,7 +443,7 @@ final class Item(val name: String) extends HasName[Person]
 Something like this could be a very common mistake stemming from copy-pasting. The compiler does not protect us from this - from its point of view this is perfectly correct code. Because of that the compiler also can't assume that `this` instance is always an instance of `Self` and will reject code like this:
 
 ```scala
-trait HasName[Self <: HasName[Self]] {
+trait SelfTyped[Self <: SelfTyped[Self]] {
   def returnSelf: Self = this // ERROR, the compiler can't be sure that `this` is an instance of `Self`
 }
 ```
@@ -451,9 +451,8 @@ trait HasName[Self <: HasName[Self]] {
 One way to solve this problem in Scala is to use additional self-type annotation:
 
 ```scala
-trait HasName[Self <: HasName[Self]] { this: Self =>
-  def name: String
-  def withName(newName: String): Self
+trait SelfTyped[Self <: SelfTyped[Self]] { this: Self =>
+  def returnSelf: Self = this
 }
 ```
 
