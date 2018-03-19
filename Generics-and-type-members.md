@@ -434,16 +434,30 @@ final class Person(val name: String, val surname: String) extends HasName[Person
 }
 ```
 
-The recursive `Self <: HasName[Self]` bound is not strictly necessary, but it explicitly ensures that `Self` inherits from `HasName`. Alternatively, we could have used a self-type annotation to express this constraint:
+The recursive `Self <: HasName[Self]` bound is not strictly necessary, but it explicitly ensures that `Self` inherits from `HasName`. This is how F-bounded polymorphism is usually implemented in Java. However, this version has a problem: it does not strictly ensure that `Self` is _always_ set to the implementing class type. For example, we could write:
 
 ```scala
-trait HasName[Self] { this: Self =>
+final class Item(val name: String) extends HasName[Person]
+```
+
+Something like this could be a very common mistake stemming from copy-pasting. The compiler does not protect us from this - from its point of view this is perfectly correct code. Because of that the compiler also can't assume that `this` instance is always an instance of `Self` and will reject code like this:
+
+```scala
+trait HasName[Self <: HasName[Self]] {
+  def returnSelf: Self = this // ERROR, the compiler can't be sure that `this` is an instance of `Self`
+}
+```
+
+One way to solve this problem in Scala is to use additional self-type annotation:
+
+```scala
+trait HasName[Self <: HasName[Self]] { this: Self =>
   def name: String
   def withName(newName: String): Self
 }
 ```
 
-The solution is nice, but introduces some syntactic crust. We can no longer simply use `HasName` as a standalone type, now we have to always write `HasName[_]` which may be annoying.
+In general, the solution with type parameter (generic) is nice, but introduces some syntactic crust. We can no longer simply use `HasName` as a standalone type, now we have to always write `HasName[_]` which may be annoying.
 
 ##### Type member solution
 
@@ -451,7 +465,7 @@ Let's replace type parameter with type member:
 
 ```scala
 trait HasName {
-  type Self <: HasName
+  type Self >: this.type <: HasName
   def name: String
   def withName(newName: String): Self
 }
@@ -460,6 +474,8 @@ final class Person(val name: String, val surname: String) extends HasName {
   def withName(newName: String): Person = new Person(newName)
 }
 ```
+
+The `>: this.type` lower bound serves the same purpose as `this: Self =>` self-type annotation from type parameter based solution. Note that lower bound must be specified before upper bound.
 
 This solves the problem in pretty much the same way the type parameter did, but relieves us from polluting definition of `HasName` with unnecessary generic crust. We don't have to rewrite all usages of `HasName` to introduce a generic or wildcard.
 
