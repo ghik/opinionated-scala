@@ -464,5 +464,89 @@ So, how do we fix it? There are several ways, but all have their limitations:
 
 ### Self-type annotations
 
-**TODO**
+Self-type annotation is a Scala construct that you can use to put a requirement on a trait or abstract class. This requirement lets you express that any non-abstract class that mixes in your self-annotated trait must 
+also mix in some other trait or (more generally) extend some type.
 
+For example:
+
+```scala
+trait A
+trait B { this: A => }
+```
+
+Now:
+* any non-abstract class extending `B` is required to also extend `A`
+* any trait or abstract class extending `B` which does not also extend `A` must repeat this requirement in its own self type annotation
+
+Examples:
+
+```scala
+class C1 extends A with B         // OK
+class C2 extends B with A         // OK
+class C3 extends B                // error! extending B without extending A
+trait C4 extends A with B         // OK
+trait C5 extends B { this: A => } // OK, repeating the requirement
+trait C6 extends B                // error! extending B without extending or requiring A
+```
+
+Self type annotation lets you use API of self-type inside the outer trait, e.g.
+
+```scala
+trait Logging {
+  def log(msg: String): Unit
+}
+trait Handler { this: Logging =>
+  def handle(stuff: String): Unit =
+    log(s"Handling $stuff") // using method from Logging trait
+}
+```
+
+In other words, self type annotation is a way for a trait or abstract class to declare a "dependency" but without creating an explicit inheritance and subtyping relation. So you can think of it as a "weaker" form of inheritance - it does some of the things that inheritance does but not all of them. That makes it somewhat more flexible.
+
+Having:
+```scala
+trait Person
+trait Childish extends Person
+trait Selfish { this: Person => }
+```
+
+The differences between self-type annotation (`Selfish`) and inheritance (`Childish`) are:
+* `Childish` is a subtype of `Person` while `Selfish` is *not* a subtype of `Person`. In other words, inheritance 
+expresses that "`Childish` *is* a `Person`" while self-type annotation expresses that "whatever is `Selfish` *must also be* a `Person`". The fact that `Selfish` can be treated as `Person` is only seen inside the body of `Selfish`.
+* `Childish` is guaranteed to come before `Person` in linearization order so it can implement and override members of `Person`. There is no guarantee that `Selfish` comes before `Person` in linearization order so it *cannot* implement or override members of `Person`. However, it may still use them.
+* Because self-type is just a *requirement*, it must ultimately be actually inherited by some class or trait or repeated by a trait or abstract class. This introduces some boilerplate to maintain. Changing self-type to another or more specific type may require you to adjust many subtraits or subclasses of the trait with self-type annotation. This is typically not necessary when using inheritance.
+* Self-type annotations can express things that are impossible to express with inheritance, e.g.
+  ```scala
+  // a cycle!
+  trait A { this: B => }
+  trait B { this: A => }
+  // self-type may be arbitrary type that can possibly refer to type parameters
+  trait Self[T] { this: T => } // referring to generic in self-type
+  trait ObjectBase { this: SomeObject.type => } // trait `ObjectBase` may only be extended by `object SomeObject`
+  ```
+
+#### `this` alias
+
+Self-type annotation may also introduce an alias identifier for `this`. This is useful especially when your trait/class has inner classes which need to refer to outer instance.
+
+```scala
+trait Logging {
+  def log(msg: String): Unit
+}
+trait Handler { handler: Logging =>
+  def handle(stuff: String): Unit =
+    new Thread {
+      def run(): Unit = {
+        handler.log(s"Handling $stuff") // using `handler` instead of `Handler.this`
+      }
+    }.start()
+}
+```
+
+When self-type annotation is used only for that purpose, the actual self-type may be omitted and only the alias is left:
+
+```scala
+trait Handler { handler =>
+  // code that uses `handler`
+}
+```
