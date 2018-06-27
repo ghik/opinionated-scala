@@ -6,7 +6,7 @@
 
 Scala is different. It's a purely object oriented language in the sense that every value is an object. That is, all the types have their classes and participate in a single class hierarchy. An outline of this hierarchy is shown below:
 
-![Scala type hierarchy](https://raw.githubusercontent.com/wiki/ghik/opinionated-scala/images/scalatypes.png)
+![Scala type hierarchy](../images/scalatypes.png)
 
 #### `Any`
 
