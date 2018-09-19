@@ -14,4 +14,5 @@ This is a tutorial intended to guide developers already familiar with Java throu
 10. [Generics and type members](chapters/Generics-and-type-members.md)
 11. [Variance](chapters/Variance.md)
 12. [Implicits](chapters/Implicits.md)
-13. [Collections library](chapters/Collections-library.md)
+13. [Collections library](chapters/Collections-library.md) [draft]
+14. [Macros](chapters/Macros.md) [draft]
