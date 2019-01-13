@@ -1,10 +1,10 @@
 Traits are a rich and complex feature of Scala and thus deserve a separate section.
 
-Traits, defined with the `trait` keyword are something between Java interfaces and abstract classes. In fact, we'll see that they *almost* can do everything that abstract classes can, but at the same time they fulfill all roles of Java interfaces.
+Traits, defined with the `trait` keyword are something between Java interfaces and abstract classes. In fact, we'll see that they can do *almost* everything that abstract classes can, but at the same time they fulfill all roles of Java interfaces.
 
 ### Traits as interfaces
 
-In their most simple form, `trait`s are equivalent to Java interfaces:
+In their simplest form, `trait`s are equivalent to Java interfaces:
 
 ```scala
 trait StuffHandler {
@@ -14,13 +14,13 @@ trait StuffHandler {
 }
 ```
 
-In this form the `trait` contains only public, abstract methods. Just like with Java interfaces, such a trait may extend multiple other traits and Java interfaces (which are actually seen by Scala type system as traits) and can be implemented by classes. A class may implement multiple interfaces.
+In this form a `trait` contains only public, abstract methods. Just like with Java interfaces, such a trait may extend multiple other traits and Java interfaces (which are actually seen by Scala type system as traits) and can be implemented by classes. A class may implement multiple interfaces.
 
 Also, note that such Scala trait will compile to regular Java interface in bytecode.
 
 ### Method implementations
 
-In Java 8, interface methods may have default implementations ("default methods"). Scala can do this too (although it's not called "default methods"):
+In Java 8, interface methods may have default implementations ("default methods"). Scala can do this too (although they're not called "default methods"):
 
 ```scala
 trait StuffHandler {
@@ -34,7 +34,7 @@ trait StuffHandler {
 
 **NOTE**: Traits were designed and implemented long before Java 8 and therefore compile to different bytecode than Java 8 deafult methods (at least for Scala 2.11).
 
-At this point, however, the similarities between Java interfaces and Scala traits end. Now we're going to show capabilities of traits which will lead us much more closer to abstract classes.
+At this point, however, the similarities between Java interfaces and Scala traits end. Now we're going to show capabilities of traits which will lead us much closer to abstract classes.
 
 ### Inheritance syntax
 
@@ -56,7 +56,7 @@ trait Utils
 class Impl extends Base with Logging with Utils
 ```
 
-However, a class doesn't need to declare its abstract class, but directly mix in some traits:
+However, a class doesn't need to declare its abstract class, it can directly mix in traits:
 
 ```scala
 trait Logging
@@ -107,7 +107,7 @@ You may encounter the `with` keyword being used in another context - in type dec
 val ab: A with B = ???
 ```
 
-Such type should be read as "something that is an instance of both `A` and `B`". Unfortunately, usage of `with` keyword is a bit accidental here, because its meaning is substantially different than in inheritance syntax. In particular:
+Such type should be read as "something that is an instance of both `A` and `B`". Unfortunately, usage of `with` keyword is a bit accidental here, because its meaning is substantially different than in inheritance syntax. In particular, when `with` is used in a type declaration `A with B` then:
 * `A` and `B` can be arbitrary types, not just classes or traits
 * the order of types does not matter
 
@@ -119,7 +119,7 @@ Such type should be read as "something that is an instance of both `A` and `B`".
 
 ### Much more than public methods
 
-Unlike in Java interfaces, methods don't have to be public - they may have any access qualifier that a class method may have. They can also be `final` (Java 8 default methods can't)
+Unlike in Java interfaces, methods don't have to be public - they may have any access modifier that a method may have. They can also be `final` (Java 8 default methods cannot)
 
 ```scala
 trait SafeStuffHandler {
