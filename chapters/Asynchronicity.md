@@ -24,3 +24,29 @@
 * We don't care that much about "forking" capabilities of asynchronicity, we want non-blocking execution and an ability
   to specify *continuations*. Therefore, we may write our program in *continuation passing style*.
 * There's another name for continuation passing style: *callback hell*.
+
+## `Async` abstractions
+
+* We can transform and compose them
+* Errors propagate themselves naturally
+* Ultimately, we can get the best syntax in Scala with for comprehensions
+* The callback nature of our abstraction only manifests itself at the boundaries
+* We still have some problems:
+  * exception handling
+  * where to invoke callbacks?
+
+## `Future`
+
+* "A value detached from time"
+* Creating `Future`s: `Future.unit`, `Future.successful`, `Future.eval`, `Future.apply`
+* `Promise`s
+* `ExecutionContext`
+ * `RunNowEC`
+ * `RunInQueueEC`
+ * `global`
+* Problems:
+ * pointless context switching -> performance degradation
+ * we must drag the execution context with us all the time
+ * choosing the right execution context is not easy
+ * blocking operations must be handled extremely carefully
+* Alternatives: Monix `Task`, cats/scalaz `IO`
