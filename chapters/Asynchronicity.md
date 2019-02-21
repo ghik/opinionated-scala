@@ -42,11 +42,12 @@
 * `Promise`s
 * `Future.sequence`/`traverse`
 * managing parallelism
+* 
 * `ExecutionContext`
   * `execute` + `reportFailure`
   * thread pool wrapping, `ExecutionContextExecutor`
   * execution may involve acquiring locks, managing some thread locals, etc.
-  * `RunNowEC`
+  * `RunNowEC` + `*Now` extension methods
   * `RunInQueueEC`
   * `global`
 * Problems:
@@ -55,3 +56,7 @@
   * choosing the right execution context is not easy
   * blocking operations must be handled extremely carefully
 * Alternatives: Monix `Task`, cats/scalaz `IO`
+* Monix `Task`
+  * represents a program
+  * retains referential transparency
+  * explicit async boundaries
