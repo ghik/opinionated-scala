@@ -40,7 +40,12 @@
 * "A value detached from time"
 * Creating `Future`s: `Future.unit`, `Future.successful`, `Future.eval`, `Future.apply`
 * `Promise`s
+* `Future.sequence`/`traverse`
+* managing parallelism
 * `ExecutionContext`
+ * `execute` + `reportFailure`
+ * thread pool wrapping, `ExecutionContextExecutor`
+ * execution may involve acquiring locks, managing some thread locals, etc.
  * `RunNowEC`
  * `RunInQueueEC`
  * `global`
