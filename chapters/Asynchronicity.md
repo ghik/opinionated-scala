@@ -43,15 +43,15 @@
 * `Future.sequence`/`traverse`
 * managing parallelism
 * `ExecutionContext`
- * `execute` + `reportFailure`
- * thread pool wrapping, `ExecutionContextExecutor`
- * execution may involve acquiring locks, managing some thread locals, etc.
- * `RunNowEC`
- * `RunInQueueEC`
- * `global`
+  * `execute` + `reportFailure`
+  * thread pool wrapping, `ExecutionContextExecutor`
+  * execution may involve acquiring locks, managing some thread locals, etc.
+  * `RunNowEC`
+  * `RunInQueueEC`
+  * `global`
 * Problems:
- * pointless context switching -> performance degradation
- * we must drag the execution context with us all the time
- * choosing the right execution context is not easy
- * blocking operations must be handled extremely carefully
+  * pointless context switching -> performance degradation
+  * we must drag the execution context with us all the time
+  * choosing the right execution context is not easy
+  * blocking operations must be handled extremely carefully
 * Alternatives: Monix `Task`, cats/scalaz `IO`
