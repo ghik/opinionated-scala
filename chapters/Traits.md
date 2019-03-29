@@ -513,7 +513,6 @@ trait Selfish { this: Person => }
 The differences between self-type annotation (`Selfish`) and inheritance (`Childish`) are:
 * `Childish` is a subtype of `Person` while `Selfish` is *not* a subtype of `Person`. In other words, inheritance 
 expresses that "`Childish` *is* a `Person`" while self-type annotation expresses that "whatever is `Selfish` *must also be* a `Person`". The fact that `Selfish` can be treated as `Person` is only seen inside the body of `Selfish`.
-* `Childish` is guaranteed to come before `Person` in linearization order so it can implement and override members of `Person`. There is no guarantee that `Selfish` comes before `Person` in linearization order so it *cannot* implement or override members of `Person`. However, it may still use them.
 * Because self-type is just a *requirement*, it must ultimately be actually inherited by some class or trait or repeated by a trait or abstract class. This introduces some boilerplate to maintain. Changing self-type to another or more specific type may require you to adjust many subtraits or subclasses of the trait with self-type annotation. This is typically not necessary when using inheritance.
 * Self-type annotations can express things that are impossible to express with inheritance, e.g.
   ```scala
